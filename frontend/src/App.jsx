@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-// import Missions from "./pages/Missions";
+import Missions from "./pages/Missions";
 // import Calendar from "./pages/Calendar";
 // import Documents from "./pages/Documents";
 // import Portfolio from "./pages/Portfolio";
@@ -21,8 +21,8 @@ function App() {
       {/* Pages protégées */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        {/* <Route path="/missions" element={<Missions />} />
-        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/missions" element={<Missions />} />
+        {/* <Route path="/calendar" element={<Calendar />} />
         <Route path="/documents" element={<Documents />} />
         <Route path="/portfolio" element={<Portfolio />} /> */}
       </Route>

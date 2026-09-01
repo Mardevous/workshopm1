@@ -44,6 +44,11 @@ function Dashboard() {
     <div>
       <h1>Tableau de bord</h1>
 
+      <button>
+        <a href="/missions">Voir les missions</a>
+      </button>
+      
+
       {/* Répartition du temps */}
       <section>
         <h2>Répartition du temps</h2>
