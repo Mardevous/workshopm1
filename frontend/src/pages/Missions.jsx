@@ -15,6 +15,8 @@ function Missions() {
   const [error, setError] = useState("");
 
   const [showForm, setShowForm] = useState(false);
+  const [selectedMission, setSelectedMission] = useState(null);
+  const [formMode, setFormMode] = useState("create");
 
   const fetchMissions = async () => {
     try {
@@ -38,6 +40,30 @@ function Missions() {
     fetchMissions();
   }, [type, statut]);
 
+  const handleCreate = () => {
+    setSelectedMission(null);
+    setFormMode("create");
+    setShowForm(true);
+  };
+
+  const handleView = (mission) => {
+    setSelectedMission(mission);
+    setFormMode("view");
+    setShowForm(true);
+  };
+
+  const handleEdit = (mission) => {
+    setSelectedMission(mission);
+    setFormMode("edit");
+    setShowForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setShowForm(false);
+    setSelectedMission(null);
+    setFormMode("create");
+  };
+
   const handleDelete = async (id) => {
     const confirmation = window.confirm(
       "Voulez-vous vraiment supprimer cette mission ?"
@@ -47,8 +73,8 @@ function Missions() {
 
     try {
       await deleteMission(id);
-
-      fetchMissions();
+      await fetchMissions();
+      
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -79,13 +105,15 @@ function Missions() {
     <div>
         <h1>Missions</h1>
 
-        <button onClick={() => setShowForm(true)}>
+        <button onClick={handleCreate}>
             + Nouvelle mission
         </button>
 
         {showForm && (
           <MissionForm
-            onClose={() => setShowForm(false)}
+            mission={selectedMission}
+            mode={formMode}
+            onClose={handleCloseForm}
             onSuccess={fetchMissions}
           />
         )}
@@ -173,9 +201,14 @@ function Missions() {
                     <td>{getInformations(mission)}</td>
 
                     <td>
-                    <button>Voir</button>
+                      
+                    <button onClick={() => handleView(mission)}>
+                      Voir
+                    </button>
 
-                    <button>Modifier</button>
+                    <button onClick={() => handleEdit(mission)}>
+                      Modifier
+                    </button>
 
                     <button
                         onClick={() =>

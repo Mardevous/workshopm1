@@ -1,10 +1,29 @@
-.mission-modal {
+.mission-form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+  background-color: rgba(25, 40, 45, 0.55);
+
+  box-sizing: border-box;
+}
+
+.mission-form-container {
   width: 100%;
   max-width: 700px;
-  max-height: 90vh;
+  max-height: calc(100vh - 40px);
   overflow-y: auto;
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+
+  padding: 40px 55px;
+
+  background-color: #ffffff;
+  border-radius: 28px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3);
+
+  box-sizing: border-box;
 }
