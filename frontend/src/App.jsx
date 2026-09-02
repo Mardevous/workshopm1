@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Missions from "./pages/Missions";
 // import Calendar from "./pages/Calendar";
 // import Documents from "./pages/Documents";
-// import Portfolio from "./pages/Portfolio";
+import Portfolio from "./pages/Portfolio";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
@@ -23,9 +23,9 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/missions" element={<Missions />} />
-        {/* <Route path="/calendar" element={<Calendar />} />
-        <Route path="/documents" element={<Documents />} />
-        <Route path="/portfolio" element={<Portfolio />} /> */}
+        {/* <Route path="/calendar" element={<Calendar />} /> */}
+        {/* <Route path="/documents" element={<Documents />} /> */}
+        <Route path="/portfolio" element={<Portfolio />} />
       </Route>
     </Routes>
   );

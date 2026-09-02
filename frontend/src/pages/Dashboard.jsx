@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
+
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -44,9 +45,19 @@ function Dashboard() {
     <div>
       <h1>Tableau de bord</h1>
 
-      <button>
-        <a href="/missions">Voir les missions</a>
-      </button>
+      <div className="dashboard-buttons">
+        <button>
+          <Link className="dashboard-link" to="/missions">
+            Voir les missions
+          </Link>
+        </button>
+        
+        <button>
+          <Link className="dashboard-link" to="/portfolio">
+            Voir le portfolio
+          </Link>
+        </button>
+      </div>
       
 
       {/* Répartition du temps */}
