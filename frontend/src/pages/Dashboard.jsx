@@ -57,6 +57,12 @@ function Dashboard() {
             Voir le portfolio
           </Link>
         </button>
+
+        <button>
+          <Link className="dashboard-link" to="/calendar">
+            Voir le calendrier
+          </Link>
+        </button>
       </div>
       
 
