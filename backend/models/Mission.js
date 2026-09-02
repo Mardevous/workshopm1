@@ -36,13 +36,10 @@ const missionSchema = new mongoose.Schema({
       default: "",
     },
 
-    // Intermittence
     heures: {
       type: Number,
       min: 0,
-      required: function () {
-        return this.type === "intermittence";
-      },
+      default: null,
     },
 
     cachets: {

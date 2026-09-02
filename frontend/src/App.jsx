@@ -8,6 +8,7 @@ import Missions from "./pages/Missions";
 // import Portfolio from "./pages/Portfolio";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import "./App.css";
 
 function App() {
   return (

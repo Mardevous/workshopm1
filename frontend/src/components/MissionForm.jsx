@@ -86,7 +86,7 @@ function MissionForm({ onClose, onSuccess }) {
   };
 
   return (
-    <div className="mission-form-container">
+    <div className="mission-modal">
       <h2>Nouvelle mission</h2>
 
       <form onSubmit={handleSubmit}>

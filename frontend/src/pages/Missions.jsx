@@ -83,6 +83,13 @@ function Missions() {
             + Nouvelle mission
         </button>
 
+        {showForm && (
+          <MissionForm
+            onClose={() => setShowForm(false)}
+            onSuccess={fetchMissions}
+          />
+        )}
+
         <div>
             <label>Type : </label>
 
