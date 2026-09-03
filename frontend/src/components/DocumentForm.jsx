@@ -1,26 +1,35 @@
 import { useState } from "react";
-import { addDocument } from "../services/documentService";
+import {
+  addDocument,
+} from "../services/documentService";
 
 function DocumentForm({
   missions,
   onClose,
   onSuccess,
 }) {
-  const [file, setFile] = useState(null);
-  const [categorie, setCategorie] = useState("");
+  const [file, setFile] =
+    useState(null);
+
+  const [categorie, setCategorie] =
+    useState("");
 
   const [missionId, setMissionId] =
     useState("");
 
-  const [missionSearch, setMissionSearch] =
-    useState("Document global");
+  const [
+    missionSearch,
+    setMissionSearch,
+  ] = useState("Document global");
 
   const [
     showMissionDropdown,
     setShowMissionDropdown,
   ] = useState(false);
 
-  const [error, setError] = useState("");
+  const [error, setError] =
+    useState("");
+
   const [loading, setLoading] =
     useState(false);
 
@@ -29,12 +38,14 @@ function DocumentForm({
       return "";
     }
 
-    return new Date(date).toLocaleDateString(
-      "fr-FR"
-    );
+    return new Date(
+      date
+    ).toLocaleDateString("fr-FR");
   };
 
-  const getMissionLabel = (mission) => {
+  const getMissionLabel = (
+    mission
+  ) => {
     if (!mission) {
       return "Document global";
     }
@@ -48,32 +59,43 @@ function DocumentForm({
       mission.client_production
     } — ${formatDate(
       mission.date_debut
-    )} → ${formatDate(mission.date_fin)}`;
+    )} → ${formatDate(
+      mission.date_fin
+    )}`;
   };
 
   const selectedMission =
     missions.find(
-      (mission) => mission._id === missionId
+      (mission) =>
+        mission._id === missionId
     ) || null;
 
   const selectedMissionLabel =
     getMissionLabel(selectedMission);
 
-  const filteredMissions = missions.filter(
-    (mission) =>
+  const filteredMissions =
+    missions.filter((mission) =>
       mission.client_production
         .toLowerCase()
         .startsWith(
-          missionSearch.trim().toLowerCase()
+          missionSearch
+            .trim()
+            .toLowerCase()
         )
-  );
+    );
 
-  const handleSelectMission = (mission) => {
+  const handleSelectMission = (
+    mission
+  ) => {
     if (!mission) {
       setMissionId("");
-      setMissionSearch("Document global");
+
+      setMissionSearch(
+        "Document global"
+      );
     } else {
       setMissionId(mission._id);
+
       setMissionSearch(
         getMissionLabel(mission)
       );
@@ -91,6 +113,7 @@ function DocumentForm({
       setError(
         "Veuillez choisir un fichier."
       );
+
       return;
     }
 
@@ -98,18 +121,19 @@ function DocumentForm({
       setError(
         "Veuillez choisir une catégorie."
       );
+
       return;
     }
 
     const formData = new FormData();
 
     formData.append("fichier", file);
+
     formData.append(
       "categorie",
       categorie
     );
 
-    // 没有mission_id时，后端保存null
     if (missionId) {
       formData.append(
         "mission_id",
@@ -144,35 +168,66 @@ function DocumentForm({
       onMouseDown={onClose}
     >
       <div
-        className="mission-form-container document-form-container"
+        className="
+          mission-form-container
+          document-form-container
+        "
         onMouseDown={(e) =>
           e.stopPropagation()
         }
       >
-        <h2>Ajouter un document</h2>
+        <div className="mission-form-header">
+          <div>
+            <h2>
+              Ajouter un document
+            </h2>
 
-        <form onSubmit={handleSubmit}>
+            <p>
+              Ajoutez un document global
+              ou associez-le à une mission.
+            </p>
+          </div>
+        </div>
+
+        <form
+          className="mission-form"
+          onSubmit={handleSubmit}
+        >
           <fieldset disabled={loading}>
-            <div>
-              <label>Fichier</label>
+            <div className="mission-form-field">
+              <label htmlFor="document-file">
+                Fichier
+              </label>
 
-              <input
-                type="file"
-                accept=".pdf,image/*"
-                onChange={(e) =>
-                  setFile(
-                    e.target.files?.[0] ||
-                      null
-                  )
-                }
-                required
-              />
+              <div className="document-file-field">
+                <input
+                  id="document-file"
+                  type="file"
+                  accept=".pdf,image/*"
+                  onChange={(e) =>
+                    setFile(
+                      e.target
+                        .files?.[0] ||
+                        null
+                    )
+                  }
+                  required
+                />
+
+                <p className="document-field-help">
+                  Fichiers PDF et images
+                  acceptés.
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label>Catégorie</label>
+            <div className="mission-form-field">
+              <label htmlFor="document-category">
+                Catégorie
+              </label>
 
               <select
+                id="document-category"
                 value={categorie}
                 onChange={(e) =>
                   setCategorie(
@@ -207,11 +262,14 @@ function DocumentForm({
               </select>
             </div>
 
-            <div className="document-mission-field">
-              <label>Mission</label>
+            <div className="mission-form-field document-mission-field">
+              <label htmlFor="document-mission">
+                Mission
+              </label>
 
               <div className="mission-dropdown">
                 <input
+                  id="document-mission"
                   type="text"
                   className="mission-dropdown-input"
                   value={missionSearch}
@@ -219,6 +277,7 @@ function DocumentForm({
                   autoComplete="off"
                   onFocus={() => {
                     setMissionSearch("");
+
                     setShowMissionDropdown(
                       true
                     );
@@ -255,9 +314,13 @@ function DocumentForm({
                     <div className="mission-dropdown-options">
                       <button
                         type="button"
-                        className="mission-dropdown-option mission-dropdown-special"
+                        className="
+                          mission-dropdown-option
+                          mission-dropdown-special
+                        "
                         onMouseDown={(e) => {
                           e.preventDefault();
+
                           handleSelectMission(
                             null
                           );
@@ -271,7 +334,9 @@ function DocumentForm({
                           <button
                             type="button"
                             className="mission-dropdown-option"
-                            key={mission._id}
+                            key={
+                              mission._id
+                            }
                             onMouseDown={(
                               e
                             ) => {
@@ -283,11 +348,11 @@ function DocumentForm({
                             }}
                           >
                             <span
-                              className={`mission-type-badge ${
+                              className={`document-mission-type ${
                                 mission.type ===
                                 "intermittence"
-                                  ? "event-intermittence"
-                                  : "event-freelance"
+                                  ? "document-mission-intermittence"
+                                  : "document-mission-freelance"
                               }`}
                             >
                               {mission.type ===
@@ -320,13 +385,20 @@ function DocumentForm({
                       {filteredMissions.length ===
                         0 && (
                         <p className="mission-option-empty">
-                          Aucune mission trouvée
+                          Aucune mission
+                          trouvée
                         </p>
                       )}
                     </div>
                   </div>
                 )}
               </div>
+
+              <p className="document-field-help">
+                Laissez « Document global »
+                si le document n'appartient
+                à aucune mission.
+              </p>
             </div>
           </fieldset>
 
@@ -339,6 +411,7 @@ function DocumentForm({
           <div className="mission-form-actions">
             <button
               type="button"
+              className="mission-cancel-button"
               onClick={onClose}
               disabled={loading}
             >
@@ -347,6 +420,7 @@ function DocumentForm({
 
             <button
               type="submit"
+              className="mission-save-button"
               disabled={loading}
             >
               {loading

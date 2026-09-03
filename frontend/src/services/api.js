@@ -1,10 +1,11 @@
 import axios from "axios";
 
+// Créer la connexion avec l'API
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL + "/api",
 });
 
-// 每次请求自动加入 JWT
+// Ajouter le token à chaque requête
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -15,9 +16,11 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Gérer les erreurs de réponse
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Rediriger si le token est invalide
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
 

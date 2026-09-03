@@ -4,6 +4,7 @@ import {
   updateMission,
 } from "../services/missionService";
 
+// Formulaire vide
 const emptyForm = {
   client_production: "",
   date_debut: "",
@@ -23,16 +24,21 @@ function MissionForm({
   onClose,
   onSuccess,
 }) {
+  // Données du formulaire
   const [form, setForm] = useState(emptyForm);
+
+  // Erreur et chargement
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Formater la date
   const formatDateForInput = (date) => {
     if (!date) return "";
 
     return new Date(date).toISOString().split("T")[0];
   };
 
+  // Remplir le formulaire
   useEffect(() => {
     if (mission) {
       setForm({
@@ -50,20 +56,20 @@ function MissionForm({
         type: mission.type || "intermittence",
         statut: mission.statut || "proposee",
         note: mission.note || "",
-
         heures: mission.heures ?? "",
         cachets: mission.cachets ?? "",
-
         montant_ht: mission.montant_ht ?? "",
         nombre_jours: mission.nombre_jours ?? "",
       });
     } else {
+      // Réinitialiser le formulaire
       setForm({ ...emptyForm });
     }
 
     setError("");
   }, [mission, mode]);
 
+  // Modifier un champ
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -73,6 +79,7 @@ function MissionForm({
     }));
   };
 
+  // Envoyer le formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,6 +89,7 @@ function MissionForm({
     setLoading(true);
 
     try {
+      // Données communes
       const data = {
         client_production: form.client_production,
         date_debut: form.date_debut,
@@ -91,6 +99,7 @@ function MissionForm({
         note: form.note,
       };
 
+      // Données d'intermittence
       if (form.type === "intermittence") {
         if (!form.heures && !form.cachets) {
           setError(
@@ -109,14 +118,12 @@ function MissionForm({
           ? Number(form.cachets)
           : 0;
 
-        /*
-         * On vide les informations freelance
-         * si le type devient intermittence.
-         */
+        // Vider les données freelance
         data.montant_ht = null;
         data.nombre_jours = null;
       }
 
+      // Données freelance
       if (form.type === "freelance") {
         if (!form.montant_ht || !form.nombre_jours) {
           setError(
@@ -132,26 +139,26 @@ function MissionForm({
           form.nombre_jours
         );
 
-        /*
-         * On vide les informations intermittence
-         * si le type devient freelance.
-         */
+        // Vider les données d'intermittence
         data.heures = null;
         data.cachets = null;
       }
 
+      // Modifier ou créer
       if (mode === "edit") {
         await updateMission(mission._id, data);
       } else {
         await createMission(data);
       }
 
+      // Actualiser la liste
       if (onSuccess) {
         await onSuccess();
       }
 
       onClose();
     } catch (error) {
+      // Afficher l'erreur
       setError(
         error.response?.data?.message ||
           error.response?.data?.error ||
@@ -165,6 +172,7 @@ function MissionForm({
   };
 
   return (
+    // Fenêtre du formulaire
     <div
       className="mission-form-overlay"
       onMouseDown={onClose}
@@ -173,6 +181,7 @@ function MissionForm({
         className="mission-form-container"
         onMouseDown={(e) => e.stopPropagation()}
       >
+        {/* Titre selon le mode */}
         <h2>
           {mode === "create" && "Nouvelle mission"}
           {mode === "view" &&
@@ -182,6 +191,7 @@ function MissionForm({
         </h2>
 
         <form onSubmit={handleSubmit}>
+          {/* Désactiver en mode lecture */}
           <fieldset disabled={mode === "view"}>
             <div>
               <label>Client / Production</label>
@@ -219,6 +229,7 @@ function MissionForm({
               />
             </div>
 
+            {/* Choix du type */}
             <div>
               <span>Type</span>
 
@@ -249,6 +260,7 @@ function MissionForm({
               </label>
             </div>
 
+            {/* Champs d'intermittence */}
             {form.type === "intermittence" && (
               <div>
                 <h3>Intermittence</h3>
@@ -279,6 +291,7 @@ function MissionForm({
               </div>
             )}
 
+            {/* Champs freelance */}
             {form.type === "freelance" && (
               <div>
                 <h3>Freelance</h3>
@@ -313,6 +326,7 @@ function MissionForm({
               </div>
             )}
 
+            {/* Statut de la mission */}
             <div>
               <label>Statut</label>
 
@@ -346,12 +360,14 @@ function MissionForm({
             </div>
           </fieldset>
 
+          {/* Message d'erreur */}
           {error && (
             <p className="mission-form-error">
               {error}
             </p>
           )}
 
+          {/* Boutons */}
           <div className="mission-form-actions">
             <button
               type="button"

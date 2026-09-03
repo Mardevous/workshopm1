@@ -1,6 +1,6 @@
 import api from "./api";
 
-// 获取文档列表，并支持按分类和 Mission 筛选
+// Récupérer les documents
 export const getDocuments = async (
   categorie = "",
   missionId = ""
@@ -15,7 +15,7 @@ export const getDocuments = async (
   return response.data;
 };
 
-// 上传文档
+// Ajouter un document
 export const addDocument = async (formData) => {
   const response = await api.post(
     "/documents",
@@ -25,7 +25,7 @@ export const addDocument = async (formData) => {
   return response.data;
 };
 
-// 下载文档
+// Télécharger un document
 export const downloadDocument = async (id) => {
   const response = await api.get(
     `/documents/${id}/download`,
@@ -37,7 +37,7 @@ export const downloadDocument = async (id) => {
   return response.data;
 };
 
-// 删除文档
+// Supprimer un document
 export const deleteDocument = async (id) => {
   const response = await api.delete(
     `/documents/${id}`
@@ -46,6 +46,7 @@ export const deleteDocument = async (id) => {
   return response.data;
 };
 
+// Afficher un document
 export const viewDocument = async (id) => {
   const response = await api.get(
     `/documents/${id}/download`,

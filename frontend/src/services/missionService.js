@@ -1,9 +1,13 @@
 import api from "./api";
 
-// 获取 missions，可带筛选
-export const getMissions = async (type = "", statut = "") => {
+// Récupérer les missions
+export const getMissions = async (
+  type = "",
+  statut = ""
+) => {
   const params = {};
 
+  // Ajouter les filtres
   if (type) params.type = type;
   if (statut) params.statut = statut;
 
@@ -14,30 +18,40 @@ export const getMissions = async (type = "", statut = "") => {
   return response.data;
 };
 
-// 获取一条 mission
+// Récupérer une mission
 export const getMissionById = async (id) => {
   const response = await api.get(`/missions/${id}`);
+
   return response.data;
 };
 
-// 新建 mission
+// Créer une mission
 export const createMission = async (data) => {
   const response = await api.post("/missions", data);
+
   return response.data;
 };
 
-// 修改 mission
+// Modifier une mission
 export const updateMission = async (id, data) => {
-  const response = await api.patch(`/missions/${id}`, data);
+  const response = await api.patch(
+    `/missions/${id}`,
+    data
+  );
+
   return response.data;
 };
 
-// 删除 mission
+// Supprimer une mission
 export const deleteMission = async (id) => {
-  const response = await api.delete(`/missions/${id}`);
+  const response = await api.delete(
+    `/missions/${id}`
+  );
+
   return response.data;
 };
 
+// Générer le PDF
 export const generateMissionPdf = async (id) => {
   const response = await api.get(
     `/missions/${id}/pdf`,

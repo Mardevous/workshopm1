@@ -4,7 +4,9 @@ import {
   Link,
 } from "react-router-dom";
 
-import { getMissions } from "../services/missionService";
+import {
+  getMissions,
+} from "../services/missionService";
 
 import {
   getDocuments,
@@ -18,17 +20,26 @@ import DocumentForm from "../components/DocumentForm";
 function Documents() {
   const navigate = useNavigate();
 
-  const [documents, setDocuments] = useState([]);
-  const [missions, setMissions] = useState([]);
+  const [documents, setDocuments] =
+    useState([]);
 
-  const [filterCategorie, setFilterCategorie] =
-    useState("");
+  const [missions, setMissions] =
+    useState([]);
 
-  const [filterMission, setFilterMission] =
-    useState("");
+  const [
+    filterCategorie,
+    setFilterCategorie,
+  ] = useState("");
 
-  const [missionSearch, setMissionSearch] =
-    useState("");
+  const [
+    filterMission,
+    setFilterMission,
+  ] = useState("");
+
+  const [
+    missionSearch,
+    setMissionSearch,
+  ] = useState("");
 
   const [
     showMissionDropdown,
@@ -71,6 +82,7 @@ function Documents() {
   const fetchMissions = async () => {
     try {
       const data = await getMissions();
+
       setMissions(data);
     } catch (error) {
       setError(
@@ -86,7 +98,10 @@ function Documents() {
 
   useEffect(() => {
     fetchDocuments();
-  }, [filterCategorie, filterMission]);
+  }, [
+    filterCategorie,
+    filterMission,
+  ]);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -98,22 +113,29 @@ function Documents() {
       return "";
     }
 
-    return new Date(date).toLocaleDateString(
-      "fr-FR"
-    );
+    return new Date(
+      date
+    ).toLocaleDateString("fr-FR");
   };
 
-  const formatCategorie = (categorie) => {
+  const formatCategorie = (
+    categorie
+  ) => {
     const categories = {
       contrat: "Contrat",
+
       attestation_employeur:
         "Attestation employeur",
+
       devis: "Devis",
       facture: "Facture",
       autre: "Autre",
     };
 
-    return categories[categorie] || categorie;
+    return (
+      categories[categorie] ||
+      categorie
+    );
   };
 
   const selectedMissionLabel = (() => {
@@ -125,25 +147,30 @@ function Documents() {
       return "Documents globaux";
     }
 
-    const selectedMission = missions.find(
-      (mission) =>
-        mission._id === filterMission
-    );
+    const selectedMission =
+      missions.find(
+        (mission) =>
+          mission._id ===
+          filterMission
+      );
 
     return (
-      selectedMission?.client_production ||
+      selectedMission
+        ?.client_production ||
       "Toutes les missions"
     );
   })();
 
-  const filteredMissions = missions.filter(
-    (mission) =>
+  const filteredMissions =
+    missions.filter((mission) =>
       mission.client_production
         .toLowerCase()
         .startsWith(
-          missionSearch.trim().toLowerCase()
+          missionSearch
+            .trim()
+            .toLowerCase()
         )
-  );
+    );
 
   const selectMission = (
     missionId,
@@ -154,15 +181,18 @@ function Documents() {
     setShowMissionDropdown(false);
   };
 
-  const handleUploadSuccess = async () => {
-    setMessage(
-      "Document ajouté avec succès."
-    );
+  const handleUploadSuccess =
+    async () => {
+      setMessage(
+        "Document ajouté avec succès."
+      );
 
-    await fetchDocuments();
-  };
+      await fetchDocuments();
+    };
 
-  const handleView = async (document) => {
+  const handleView = async (
+    document
+  ) => {
     try {
       setError("");
 
@@ -170,19 +200,22 @@ function Documents() {
         document._id
       );
 
-      const fileBlob = new Blob([blob], {
-        type:
-          document.mime_type ||
-          "application/octet-stream",
-      });
+      const fileBlob = new Blob(
+        [blob],
+        {
+          type:
+            document.mime_type ||
+            "application/octet-stream",
+        }
+      );
 
       const url =
-        window.URL.createObjectURL(fileBlob);
+        window.URL.createObjectURL(
+          fileBlob
+        );
 
-      const previewWindow = window.open(
-        url,
-        "_blank"
-      );
+      const previewWindow =
+        window.open(url, "_blank");
 
       if (!previewWindow) {
         setError(
@@ -191,7 +224,9 @@ function Documents() {
       }
 
       setTimeout(() => {
-        window.URL.revokeObjectURL(url);
+        window.URL.revokeObjectURL(
+          url
+        );
       }, 60000);
     } catch (error) {
       setError(
@@ -201,30 +236,42 @@ function Documents() {
     }
   };
 
-  const handleDownload = async (document) => {
+  const handleDownload = async (
+    document
+  ) => {
     try {
       setError("");
 
-      const blob = await downloadDocument(
-        document._id
+      const blob =
+        await downloadDocument(
+          document._id
+        );
+
+      const fileBlob = new Blob(
+        [blob],
+        {
+          type:
+            document.mime_type ||
+            "application/octet-stream",
+        }
       );
 
-      const fileBlob = new Blob([blob], {
-        type:
-          document.mime_type ||
-          "application/octet-stream",
-      });
-
       const url =
-        window.URL.createObjectURL(fileBlob);
+        window.URL.createObjectURL(
+          fileBlob
+        );
 
       const link =
-        window.document.createElement("a");
+        window.document.createElement(
+          "a"
+        );
 
       link.href = url;
       link.download = document.nom;
 
-      window.document.body.appendChild(link);
+      window.document.body.appendChild(
+        link
+      );
 
       link.click();
       link.remove();
@@ -239,9 +286,10 @@ function Documents() {
   };
 
   const handleDelete = async (id) => {
-    const confirmation = window.confirm(
-      "Voulez-vous vraiment supprimer ce document ?"
-    );
+    const confirmation =
+      window.confirm(
+        "Voulez-vous vraiment supprimer ce document ?"
+      );
 
     if (!confirmation) {
       return;
@@ -267,340 +315,434 @@ function Documents() {
   };
 
   return (
-    <div>
+    <div className="documents-page">
       <Link
-        className="dashboard-link"
+        className="documents-back-link"
         to="/dashboard"
       >
-        Retour au dashboard
+        ← Retour au dashboard
       </Link>
 
-      <div className="header">
-        <h1>Documents</h1>
+      <div className="documents-header">
+        <div>
+          <h1>Documents</h1>
 
-        <button onClick={logout}>
+          <p>
+            Gérez vos contrats,
+            attestations, devis et
+            factures.
+          </p>
+        </div>
+
+        <button
+          className="documents-logout-button"
+          onClick={logout}
+        >
           Déconnexion
         </button>
       </div>
 
-      <button
-        onClick={() => {
-          setMessage("");
-          setError("");
-          setShowForm(true);
-        }}
-      >
-        + Ajouter un document
-      </button>
+      <div className="documents-toolbar">
+        <button
+          className="documents-create-button"
+          onClick={() => {
+            setMessage("");
+            setError("");
+            setShowForm(true);
+          }}
+        >
+          + Ajouter un document
+        </button>
+
+        <div className="documents-filters">
+          <label className="documents-filter">
+            <span>Catégorie</span>
+
+            <select
+              value={filterCategorie}
+              onChange={(e) =>
+                setFilterCategorie(
+                  e.target.value
+                )
+              }
+            >
+              <option value="">
+                Toutes
+              </option>
+
+              <option value="contrat">
+                Contrat
+              </option>
+
+              <option value="attestation_employeur">
+                Attestation employeur
+              </option>
+
+              <option value="devis">
+                Devis
+              </option>
+
+              <option value="facture">
+                Facture
+              </option>
+
+              <option value="autre">
+                Autre
+              </option>
+            </select>
+          </label>
+
+          <div className="documents-filter">
+            <span>Mission</span>
+
+            <div className="mission-dropdown">
+              <input
+                type="text"
+                className="mission-dropdown-input"
+                value={missionSearch}
+                placeholder="Rechercher une mission"
+                autoComplete="off"
+                onFocus={() => {
+                  setMissionSearch("");
+
+                  setShowMissionDropdown(
+                    true
+                  );
+                }}
+                onClick={() => {
+                  setShowMissionDropdown(
+                    true
+                  );
+                }}
+                onChange={(e) => {
+                  setMissionSearch(
+                    e.target.value
+                  );
+
+                  setShowMissionDropdown(
+                    true
+                  );
+                }}
+                onBlur={() => {
+                  setTimeout(() => {
+                    setShowMissionDropdown(
+                      false
+                    );
+
+                    if (!missionSearch) {
+                      setMissionSearch(
+                        selectedMissionLabel
+                      );
+                    }
+                  }, 150);
+                }}
+              />
+
+              {showMissionDropdown && (
+                <div className="mission-dropdown-panel">
+                  <div className="mission-dropdown-options">
+                    <button
+                      type="button"
+                      className="
+                        mission-dropdown-option
+                        mission-dropdown-special
+                      "
+                      onMouseDown={() =>
+                        selectMission(
+                          "",
+                          "Toutes les missions"
+                        )
+                      }
+                    >
+                      Toutes les missions
+                    </button>
+
+                    <button
+                      type="button"
+                      className="
+                        mission-dropdown-option
+                        mission-dropdown-special
+                      "
+                      onMouseDown={() =>
+                        selectMission(
+                          "global",
+                          "Documents globaux"
+                        )
+                      }
+                    >
+                      Documents globaux
+                    </button>
+
+                    {filteredMissions.map(
+                      (mission) => (
+                        <button
+                          type="button"
+                          className="mission-dropdown-option"
+                          key={
+                            mission._id
+                          }
+                          onMouseDown={() =>
+                            selectMission(
+                              mission._id,
+                              mission.client_production
+                            )
+                          }
+                        >
+                          <span
+                            className={`document-mission-type ${
+                              mission.type ===
+                              "intermittence"
+                                ? "document-mission-intermittence"
+                                : "document-mission-freelance"
+                            }`}
+                          >
+                            {mission.type ===
+                            "intermittence"
+                              ? "Intermittence"
+                              : "Freelance"}
+                          </span>
+
+                          <span className="mission-option-name">
+                            {
+                              mission.client_production
+                            }
+                          </span>
+
+                          <span className="mission-option-date">
+                            {formatDate(
+                              mission.date_debut
+                            )}
+
+                            {" → "}
+
+                            {formatDate(
+                              mission.date_fin
+                            )}
+                          </span>
+                        </button>
+                      )
+                    )}
+
+                    {filteredMissions.length ===
+                      0 && (
+                      <p className="mission-option-empty">
+                        Aucune mission
+                        trouvée
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {showForm && (
         <DocumentForm
           missions={missions}
-          onClose={() => setShowForm(false)}
-          onSuccess={handleUploadSuccess}
+          onClose={() =>
+            setShowForm(false)
+          }
+          onSuccess={
+            handleUploadSuccess
+          }
         />
       )}
 
       {message && (
-        <p className="success-message">
+        <p className="documents-success">
           {message}
         </p>
       )}
 
       {error && (
-        <p className="mission-form-error">
+        <p className="documents-error">
           {error}
         </p>
       )}
 
-      <h2>Mes documents</h2>
-
-      <div className="document-filters">
-        <div>
-          <label>Catégorie : </label>
-
-          <select
-            value={filterCategorie}
-            onChange={(e) =>
-              setFilterCategorie(
-                e.target.value
-              )
-            }
-          >
-            <option value="">
-              Toutes
-            </option>
-
-            <option value="contrat">
-              Contrat
-            </option>
-
-            <option value="attestation_employeur">
-              Attestation employeur
-            </option>
-
-            <option value="devis">
-              Devis
-            </option>
-
-            <option value="facture">
-              Facture
-            </option>
-
-            <option value="autre">
-              Autre
-            </option>
-          </select>
-        </div>
-
-        <div className="mission-filter">
-          <label>Mission : </label>
-
-          <div className="mission-dropdown">
-            <input
-              type="text"
-              className="mission-dropdown-input"
-              value={missionSearch}
-              placeholder="Rechercher une mission"
-              autoComplete="off"
-              onFocus={() => {
-                // 点击时清空文字并显示全部Mission
-                setMissionSearch("");
-                setShowMissionDropdown(true);
-              }}
-              onClick={() => {
-                setShowMissionDropdown(true);
-              }}
-              onChange={(e) => {
-                setMissionSearch(e.target.value);
-                setShowMissionDropdown(true);
-              }}
-              onBlur={() => {
-                // 等待下拉选项的点击事件完成
-                setTimeout(() => {
-                  setShowMissionDropdown(false);
-
-                  if (!missionSearch) {
-                    setMissionSearch(
-                      selectedMissionLabel
-                    );
-                  }
-                }, 150);
-              }}
-            />
-
-            {showMissionDropdown && (
-              <div className="mission-dropdown-panel">
-                <div className="mission-dropdown-options">
-                  <button
-                    type="button"
-                    className="mission-dropdown-option mission-dropdown-special"
-                    onMouseDown={() =>
-                      selectMission(
-                        "",
-                        "Toutes les missions"
-                      )
-                    }
-                  >
-                    Toutes les missions
-                  </button>
-
-                  <button
-                    type="button"
-                    className="mission-dropdown-option mission-dropdown-special"
-                    onMouseDown={() =>
-                      selectMission(
-                        "global",
-                        "Documents globaux"
-                      )
-                    }
-                  >
-                    Documents globaux
-                  </button>
-
-                  {filteredMissions.map((mission) => (
-                    <button
-                      type="button"
-                      className="mission-dropdown-option"
-                      key={mission._id}
-                      onMouseDown={() =>
-                        selectMission(
-                          mission._id,
-                          mission.client_production
-                        )
-                      }
-                    >
-                      <span
-                        className={`mission-type-badge ${
-                          mission.type ===
-                          "intermittence"
-                            ? "event-intermittence"
-                            : "event-freelance"
-                        }`}
-                      >
-                        {mission.type ===
-                        "intermittence"
-                          ? "Intermittence"
-                          : "Freelance"}
-                      </span>
-
-                      <span className="mission-option-name">
-                        {mission.client_production}
-                      </span>
-
-                      <span className="mission-option-date">
-                        {formatDate(
-                          mission.date_debut
-                        )}
-
-                        {" → "}
-
-                        {formatDate(
-                          mission.date_fin
-                        )}
-                      </span>
-                    </button>
-                  ))}
-
-                  {filteredMissions.length === 0 && (
-                    <p className="mission-option-empty">
-                      Aucune mission trouvée
-                    </p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
       {loading && (
-        <p>Chargement...</p>
+        <div className="documents-state">
+          Chargement...
+        </div>
       )}
 
       {!loading &&
         documents.length === 0 && (
-          <p>
-            Aucun document trouvé.
-          </p>
+          <div className="documents-empty">
+            <strong>
+              Aucun document trouvé
+            </strong>
+
+            <p>
+              Modifiez les filtres ou
+              ajoutez un nouveau document.
+            </p>
+          </div>
         )}
 
       {!loading &&
         documents.length > 0 && (
-          <table border="1">
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Catégorie</th>
-                <th>Mission</th>
-                <th>Taille</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+          <div className="documents-table-card">
+            <div className="documents-table-header">
+              <div>
+                <h2>Mes documents</h2>
 
-            <tbody>
-              {documents.map((document) => {
-                const mission =
-                  document.mission_id;
+                <p>
+                  {documents.length} document
+                  {documents.length > 1
+                    ? "s"
+                    : ""}
+                </p>
+              </div>
+            </div>
 
-                return (
-                  <tr key={document._id}>
-                    <td>{document.nom}</td>
-
-                    <td>
-                      {formatCategorie(
-                        document.categorie
-                      )}
-                    </td>
-
-                    <td>
-                      {mission ? (
-                        <div className="document-mission">
-                          <div className="document-mission-header">
-                            <span
-                              className={`mission-type-badge ${
-                                mission.type ===
-                                "intermittence"
-                                  ? "event-intermittence"
-                                  : "event-freelance"
-                              }`}
-                            >
-                              {mission.type ===
-                              "intermittence"
-                                ? "Intermittence"
-                                : "Freelance"}
-                            </span>
-
-                            <span className="document-mission-date">
-                              {formatDate(
-                                mission.date_debut
-                              )}
-
-                              {" → "}
-
-                              {formatDate(
-                                mission.date_fin
-                              )}
-                            </span>
-                          </div>
-
-                          <strong>
-                            {
-                              mission.client_production
-                            }
-                          </strong>
-                        </div>
-                      ) : (
-                        <span>
-                          Global
-                        </span>
-                      )}
-                    </td>
-
-                    <td>
-                      {Math.round(
-                        document.taille /
-                          1024
-                      )}{" "}
-                      Ko
-                    </td>
-
-                    <td>
-                      <button
-                        onClick={() =>
-                          handleView(
-                            document
-                          )
-                        }
-                      >
-                        Voir
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          handleDownload(
-                            document
-                          )
-                        }
-                      >
-                        Télécharger
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          handleDelete(
-                            document._id
-                          )
-                        }
-                      >
-                        Supprimer
-                      </button>
-                    </td>
+            <div className="documents-table-wrapper">
+              <table className="documents-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Catégorie</th>
+                    <th>Mission</th>
+                    <th>Taille</th>
+                    <th>Actions</th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                </thead>
+
+                <tbody>
+                  {documents.map(
+                    (document) => {
+                      const mission =
+                        document.mission_id;
+
+                      return (
+                        <tr
+                          key={
+                            document._id
+                          }
+                        >
+                          <td>
+                            <strong className="document-name">
+                              {document.nom}
+                            </strong>
+                          </td>
+
+                          <td>
+                            <span className="document-category">
+                              {formatCategorie(
+                                document.categorie
+                              )}
+                            </span>
+                          </td>
+
+                          <td>
+                            {mission ? (
+                              <div className="document-mission">
+                                <div className="document-mission-header">
+                                  <span
+                                    className={`document-mission-type ${
+                                      mission.type ===
+                                      "intermittence"
+                                        ? "document-mission-intermittence"
+                                        : "document-mission-freelance"
+                                    }`}
+                                  >
+                                    {mission.type ===
+                                    "intermittence"
+                                      ? "Intermittence"
+                                      : "Freelance"}
+                                  </span>
+
+                                  <span className="document-mission-date">
+                                    {formatDate(
+                                      mission.date_debut
+                                    )}
+
+                                    {" → "}
+
+                                    {formatDate(
+                                      mission.date_fin
+                                    )}
+                                  </span>
+                                </div>
+
+                                <strong>
+                                  {
+                                    mission.client_production
+                                  }
+                                </strong>
+                              </div>
+                            ) : (
+                              <span className="document-global">
+                                Global
+                              </span>
+                            )}
+                          </td>
+
+                          <td>
+                            <span className="document-size">
+                              {Math.round(
+                                document.taille /
+                                  1024
+                              )}{" "}
+                              Ko
+                            </span>
+                          </td>
+
+                          <td>
+                            <div className="document-actions">
+                              <button
+                                className="
+                                  action-button
+                                  action-view
+                                "
+                                onClick={() =>
+                                  handleView(
+                                    document
+                                  )
+                                }
+                              >
+                                Voir
+                              </button>
+
+                              <button
+                                className="
+                                  action-button
+                                  action-download
+                                "
+                                onClick={() =>
+                                  handleDownload(
+                                    document
+                                  )
+                                }
+                              >
+                                Télécharger
+                              </button>
+
+                              <button
+                                className="
+                                  action-button
+                                  action-delete
+                                "
+                                onClick={() =>
+                                  handleDelete(
+                                    document._id
+                                  )
+                                }
+                              >
+                                Supprimer
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    }
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
     </div>
   );

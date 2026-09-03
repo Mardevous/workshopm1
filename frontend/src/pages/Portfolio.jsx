@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import {
+  useNavigate,
+  Link,
+} from "react-router-dom";
 
 import {
   getPortfolioProjects,
@@ -10,30 +13,40 @@ import PortfolioForm from "../components/PortfolioForm";
 
 function Portfolio() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
-  const [tag, setTag] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [selectedProject, setSelectedProject ] = useState(null);
-  const [formMode, setFormMode] = useState("create");
 
+  const [projects, setProjects] =
+    useState([]);
+
+  const [tag, setTag] = useState("");
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [showForm, setShowForm] =
+    useState(false);
+
+  const [
+    selectedProject,
+    setSelectedProject,
+  ] = useState(null);
+
+  const [formMode, setFormMode] =
+    useState("create");
 
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  // =========================
-  // GET PROJECTS
-  // =========================
-
   const fetchProjects = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const data = await getPortfolioProjects(tag);
+      const data =
+        await getPortfolioProjects(tag);
 
       setProjects(data);
     } catch (error) {
@@ -50,57 +63,29 @@ function Portfolio() {
     fetchProjects();
   }, [tag]);
 
-  // =========================
-  // CREATE
-  // =========================
-
   const handleCreate = () => {
     setSelectedProject(null);
-
     setFormMode("create");
-
     setShowForm(true);
   };
-
-  // =========================
-  // VIEW
-  // =========================
 
   const handleView = (project) => {
     setSelectedProject(project);
-
     setFormMode("view");
-
     setShowForm(true);
   };
-
-  // =========================
-  // EDIT
-  // =========================
 
   const handleEdit = (project) => {
     setSelectedProject(project);
-
     setFormMode("edit");
-
     setShowForm(true);
   };
 
-  // =========================
-  // CLOSE FORM
-  // =========================
-
   const handleCloseForm = () => {
     setShowForm(false);
-
     setSelectedProject(null);
-
     setFormMode("create");
   };
-
-  // =========================
-  // DELETE
-  // =========================
 
   const handleDelete = async (id) => {
     const confirmation =
@@ -114,7 +99,6 @@ function Portfolio() {
 
     try {
       await deletePortfolioProject(id);
-
       await fetchProjects();
     } catch (error) {
       setError(
@@ -124,19 +108,11 @@ function Portfolio() {
     }
   };
 
-  // =========================
-  // DATE
-  // =========================
-
   const formatDate = (date) => {
     return new Date(
       date
     ).toLocaleDateString("fr-FR");
   };
-
-  // =========================
-  // VIDEO
-  // =========================
 
   const getEmbedUrl = (url) => {
     if (!url) {
@@ -144,9 +120,6 @@ function Portfolio() {
     }
 
     try {
-      // YouTube classique
-      // https://youtube.com/watch?v=xxx
-
       if (
         url.includes(
           "youtube.com/watch"
@@ -156,21 +129,14 @@ function Portfolio() {
           new URL(url);
 
         const videoId =
-          videoUrl.searchParams.get(
-            "v"
-          );
+          videoUrl.searchParams.get("v");
 
         if (videoId) {
           return `https://www.youtube.com/embed/${videoId}`;
         }
       }
 
-      // YouTube court
-      // https://youtu.be/xxx
-
-      if (
-        url.includes("youtu.be/")
-      ) {
+      if (url.includes("youtu.be/")) {
         const videoId = url
           .split("youtu.be/")[1]
           ?.split("?")[0];
@@ -179,8 +145,6 @@ function Portfolio() {
           return `https://www.youtube.com/embed/${videoId}`;
         }
       }
-
-      // YouTube Shorts
 
       if (
         url.includes(
@@ -198,12 +162,7 @@ function Portfolio() {
         }
       }
 
-      // Vimeo
-      // https://vimeo.com/123456
-
-      if (
-        url.includes("vimeo.com/")
-      ) {
+      if (url.includes("vimeo.com/")) {
         const videoId = url
           .split("vimeo.com/")[1]
           ?.split("?")[0];
@@ -220,220 +179,208 @@ function Portfolio() {
   };
 
   return (
-    <div className="page-container">
-      {/* HEADER */}
-      <button>
-        <Link className="dashboard-link" to="/dashboard">
-          Retour au dashboard
-        </Link>
-      </button>
-      <div className="page-header">
-        <div className="header">
+    <div className="portfolio-page">
+      <Link
+        className="portfolio-back-link"
+        to="/dashboard"
+      >
+        ← Retour au dashboard
+      </Link>
+
+      <div className="portfolio-page-header">
+        <div>
           <h1>Portfolio</h1>
 
-          <button onClick={logout}>
-            Déconnexion
-          </button>
+          <p>
+            Présentez vos projets
+            professionnels et personnels.
+          </p>
         </div>
 
         <button
-          className="btn btn-primary"
+          className="portfolio-logout-button"
+          onClick={logout}
+        >
+          Déconnexion
+        </button>
+      </div>
+
+      <div className="portfolio-toolbar">
+        <button
+          className="portfolio-create-button"
           onClick={handleCreate}
         >
           + Nouveau projet
         </button>
-      </div>
 
-      {/* FILTRES */}
-
-      <div className="missions-filters">
-        <div className="filter-group">
+        <div className="portfolio-filters">
           <label>
-            Type :
+            <span>Type</span>
+
+            <select
+              value={tag}
+              onChange={(e) =>
+                setTag(e.target.value)
+              }
+            >
+              <option value="">
+                Tous
+              </option>
+
+              <option value="pro">
+                Professionnel
+              </option>
+
+              <option value="perso">
+                Personnel
+              </option>
+            </select>
           </label>
-
-          <select
-            value={tag}
-            onChange={(e) =>
-              setTag(
-                e.target.value
-              )
-            }
-          >
-            <option value="">
-              Tous
-            </option>
-
-            <option value="pro">
-              Professionnel
-            </option>
-
-            <option value="perso">
-              Personnel
-            </option>
-          </select>
         </div>
       </div>
 
-      {/* LOADING */}
-
       {loading && (
-        <p className="loading-message">
+        <div className="portfolio-state">
           Chargement...
-        </p>
+        </div>
       )}
 
-      {/* ERROR */}
-
       {error && (
-        <p className="error-message">
+        <p className="portfolio-error">
           {error}
         </p>
       )}
 
-      {/* EMPTY */}
-
       {!loading &&
         projects.length === 0 && (
-          <div className="empty-state">
-            Aucun projet trouvé.
+          <div className="portfolio-empty">
+            <strong>
+              Aucun projet trouvé
+            </strong>
+
+            <p>
+              Modifiez le filtre ou
+              ajoutez un nouveau projet.
+            </p>
           </div>
         )}
-
-      {/* PROJECTS */}
 
       {!loading &&
         projects.length > 0 && (
           <div className="portfolio-grid">
-            {projects.map(
-              (project) => {
-                const embedUrl =
-                  getEmbedUrl(
-                    project.lien_video
-                  );
-
-                return (
-                  <article
-                    className="portfolio-card"
-                    key={
-                      project._id
-                    }
-                  >
-                    {/* VIDEO */}
-
-                    <div className="portfolio-video">
-                      {embedUrl ? (
-                        <iframe
-                          src={
-                            embedUrl
-                          }
-                          title={
-                            project.titre
-                          }
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      ) : (
-                        <div className="portfolio-no-video">
-                          Vidéo non
-                          disponible
-                        </div>
-                      )}
-                    </div>
-
-                    {/* CONTENT */}
-
-                    <div className="portfolio-content">
-                      <div className="portfolio-card-header">
-                        <h2>
-                          {
-                            project.titre
-                          }
-                        </h2>
-
-                        <span
-                          className={`badge ${
-                            project.tag ===
-                            "pro"
-                              ? "badge-intermittence"
-                              : "badge-freelance"
-                          }`}
-                        >
-                          {project.tag ===
-                          "pro"
-                            ? "Pro"
-                            : "Perso"}
-                        </span>
-                      </div>
-
-                      <p className="portfolio-date">
-                        {formatDate(
-                          project.date
-                        )}
-                      </p>
-
-                      <p className="portfolio-description">
-                        {
-                          project.description
-                        }
-                      </p>
-
-                      {/* ACTIONS */}
-
-                      <div className="portfolio-actions">
-                        <button
-                          className="btn btn-secondary btn-small"
-                          onClick={() =>
-                            handleView(
-                              project
-                            )
-                          }
-                        >
-                          Voir
-                        </button>
-
-                        <button
-                          className="btn btn-secondary btn-small"
-                          onClick={() =>
-                            handleEdit(
-                              project
-                            )
-                          }
-                        >
-                          Modifier
-                        </button>
-
-                        <button
-                          className="btn btn-danger btn-small"
-                          onClick={() =>
-                            handleDelete(
-                              project._id
-                            )
-                          }
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    </div>
-                  </article>
+            {projects.map((project) => {
+              const embedUrl =
+                getEmbedUrl(
+                  project.lien_video
                 );
-              }
-            )}
+
+              return (
+                <article
+                  className="portfolio-card"
+                  key={project._id}
+                >
+                  <div className="portfolio-video">
+                    {embedUrl ? (
+                      <iframe
+                        src={embedUrl}
+                        title={
+                          project.titre
+                        }
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="portfolio-no-video">
+                        Vidéo non
+                        disponible
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="portfolio-content">
+                    <div className="portfolio-card-header">
+                      <h2>
+                        {project.titre}
+                      </h2>
+
+                      <span
+                        className={`portfolio-tag ${
+                          project.tag ===
+                          "pro"
+                            ? "portfolio-tag-pro"
+                            : "portfolio-tag-perso"
+                        }`}
+                      >
+                        {project.tag ===
+                        "pro"
+                          ? "Professionnel"
+                          : "Personnel"}
+                      </span>
+                    </div>
+
+                    <p className="portfolio-date">
+                      {formatDate(
+                        project.date
+                      )}
+                    </p>
+
+                    <p className="portfolio-description">
+                      {project.description ||
+                        "Aucune description."}
+                    </p>
+
+                    <div className="portfolio-actions">
+                      <button
+                        className="
+                          action-button
+                          action-view
+                        "
+                        onClick={() =>
+                          handleView(project)
+                        }
+                      >
+                        Voir
+                      </button>
+
+                      <button
+                        className="
+                          action-button
+                          action-edit
+                        "
+                        onClick={() =>
+                          handleEdit(project)
+                        }
+                      >
+                        Modifier
+                      </button>
+
+                      <button
+                        className="
+                          action-button
+                          action-delete
+                        "
+                        onClick={() =>
+                          handleDelete(
+                            project._id
+                          )
+                        }
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         )}
-
-      {/* MODAL */}
 
       {showForm && (
         <PortfolioForm
           project={selectedProject}
           mode={formMode}
-          onClose={
-            handleCloseForm
-          }
-          onSuccess={
-            fetchProjects
-          }
+          onClose={handleCloseForm}
+          onSuccess={fetchProjects}
         />
       )}
     </div>

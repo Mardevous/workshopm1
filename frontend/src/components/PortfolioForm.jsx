@@ -19,10 +19,14 @@ function PortfolioForm({
   onClose,
   onSuccess,
 }) {
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] =
+    useState(emptyForm);
 
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
 
   const formatDateForInput = (date) => {
     if (!date) return "";
@@ -36,12 +40,16 @@ function PortfolioForm({
     if (project) {
       setForm({
         titre: project.titre || "",
-        description:project.description || "",
+
+        description:
+          project.description || "",
+
         tag: project.tag || "pro",
 
-        date: formatDateForInput(
-          project.date
-        ),
+        date:
+          formatDateForInput(
+            project.date
+          ),
 
         lien_video:
           project.lien_video || "",
@@ -89,7 +97,9 @@ function PortfolioForm({
           data
         );
       } else {
-        await createPortfolioProject(data);
+        await createPortfolioProject(
+          data
+        );
       }
 
       if (onSuccess) {
@@ -116,85 +126,122 @@ function PortfolioForm({
       onMouseDown={onClose}
     >
       <div
-        className="mission-form-container"
-        onMouseDown={(e) => e.stopPropagation()}
+        className="
+          mission-form-container
+          portfolio-form-container
+        "
+        onMouseDown={(e) =>
+          e.stopPropagation()
+        }
       >
-        <h2>
-          {mode === "create" &&
-            "Nouveau projet"}
+        <div className="mission-form-header">
+          <div>
+            <h2>
+              {mode === "create" &&
+                "Nouveau projet"}
 
-          {mode === "view" &&
-            "Détails du projet"}
+              {mode === "view" &&
+                "Détails du projet"}
 
-          {mode === "edit" &&
-            "Modifier le projet"}
-        </h2>
+              {mode === "edit" &&
+                "Modifier le projet"}
+            </h2>
 
-        <form onSubmit={handleSubmit}>
+            <p>
+              {mode === "create" &&
+                "Ajoutez un projet à votre portfolio."}
+
+              {mode === "view" &&
+                "Consultez les informations du projet."}
+
+              {mode === "edit" &&
+                "Modifiez les informations du projet."}
+            </p>
+          </div>
+        </div>
+
+        <form
+          className="mission-form"
+          onSubmit={handleSubmit}
+        >
           <fieldset
             disabled={mode === "view"}
           >
-            {/* Titre */}
-            <div className="form-group">
-              <label>Titre</label>
+            <div className="mission-form-field">
+              <label htmlFor="titre">
+                Titre
+              </label>
 
               <input
+                id="titre"
                 type="text"
                 name="titre"
                 value={form.titre}
                 onChange={handleChange}
+                placeholder="Titre du projet"
                 required
               />
             </div>
 
-            {/* Description */}
-            <div className="form-group">
-              <label>Description</label>
+            <div className="mission-form-field">
+              <label htmlFor="description">
+                Description
+              </label>
 
               <textarea
+                id="description"
                 name="description"
                 value={form.description}
                 onChange={handleChange}
+                placeholder="Décrivez votre projet..."
               />
             </div>
 
-            {/* Date */}
-            <div className="form-group">
-              <label>Date</label>
+            <div className="portfolio-form-grid">
+              <div className="mission-form-field">
+                <label htmlFor="date">
+                  Date
+                </label>
 
-              <input
-                type="date"
-                name="date"
-                value={form.date}
-                onChange={handleChange}
-                required
-              />
+                <input
+                  id="date"
+                  type="date"
+                  name="date"
+                  value={form.date}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mission-form-field">
+                <label htmlFor="tag">
+                  Type
+                </label>
+
+                <select
+                  id="tag"
+                  name="tag"
+                  value={form.tag}
+                  onChange={handleChange}
+                >
+                  <option value="pro">
+                    Professionnel
+                  </option>
+
+                  <option value="perso">
+                    Personnel
+                  </option>
+                </select>
+              </div>
             </div>
 
-            {/* Tag */}
-            <div className="form-group">
-              <label>Type</label>
-
-              <select
-                name="tag"
-                value={form.tag}
-                onChange={handleChange}
-              >
-                <option value="pro">
-                  Professionnel
-                </option>
-
-                <option value="perso">
-                  Personnel
-                </option>
-              </select>
-            </div>
-
-            {/* Lien vidéo */}
-            <div className="form-group">
-              <label>Lien vidéo</label>
+            <div className="mission-form-field">
+              <label htmlFor="lien_video">
+                Lien vidéo
+              </label>
 
               <input
+                id="lien_video"
                 type="url"
                 name="lien_video"
                 value={form.lien_video}
@@ -202,21 +249,24 @@ function PortfolioForm({
                 placeholder="https://www.youtube.com/watch?v=..."
                 required
               />
+
+              <p className="portfolio-video-help">
+                Liens YouTube, YouTube
+                Shorts et Vimeo acceptés.
+              </p>
             </div>
           </fieldset>
 
-          {/* Erreur */}
           {error && (
             <p className="mission-form-error">
               {error}
             </p>
           )}
 
-          {/* Actions */}
           <div className="mission-form-actions">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="mission-cancel-button"
               onClick={onClose}
             >
               {mode === "view"
@@ -227,7 +277,7 @@ function PortfolioForm({
             {mode !== "view" && (
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="mission-save-button"
                 disabled={loading}
               >
                 {loading

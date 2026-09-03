@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { getMissions, deleteMission, generateMissionPdf } from "../services/missionService";
+import {
+  useNavigate,
+  Link,
+} from "react-router-dom";
+import {
+  getMissions,
+  deleteMission,
+  generateMissionPdf,
+} from "../services/missionService";
 import MissionForm from "../components/MissionForm";
 
 function Missions() {
   const navigate = useNavigate();
+
   const [missions, setMissions] = useState([]);
 
   const [type, setType] = useState("");
@@ -14,15 +22,24 @@ function Missions() {
   const [error, setError] = useState("");
 
   const [showForm, setShowForm] = useState(false);
-  const [selectedMission, setSelectedMission] = useState(null);
-  const [formMode, setFormMode] = useState("create");
+
+  const [
+    selectedMission,
+    setSelectedMission,
+  ] = useState(null);
+
+  const [formMode, setFormMode] =
+    useState("create");
 
   const fetchMissions = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const data = await getMissions(type, statut);
+      const data = await getMissions(
+        type,
+        statut
+      );
 
       setMissions(data);
     } catch (error) {
@@ -35,31 +52,39 @@ function Missions() {
     }
   };
 
-  const handleGeneratePdf = async (mission) => {
+  const handleGeneratePdf = async (
+    mission
+  ) => {
     try {
       setError("");
 
-      const pdfBlob = await generateMissionPdf(
-        mission._id
-      );
+      const pdfBlob =
+        await generateMissionPdf(
+          mission._id
+        );
 
-      const pdfUrl = window.URL.createObjectURL(
-        pdfBlob
-      );
+      const pdfUrl =
+        window.URL.createObjectURL(
+          pdfBlob
+        );
 
-      const link = document.createElement("a");
+      const link =
+        document.createElement("a");
 
       link.href = pdfUrl;
 
       const safeClientName =
         mission.client_production
-          ?.replace(/[^a-zA-Z0-9À-ÿ_-]/g, "_") ||
-        "mission";
+          ?.replace(
+            /[^a-zA-Z0-9À-ÿ_-]/g,
+            "_"
+          ) || "mission";
 
       link.download =
         `recapitulatif-${safeClientName}.pdf`;
 
       document.body.appendChild(link);
+
       link.click();
       link.remove();
 
@@ -115,7 +140,6 @@ function Missions() {
     try {
       await deleteMission(id);
       await fetchMissions();
-      
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -125,11 +149,15 @@ function Missions() {
   };
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("fr-FR");
+    return new Date(
+      date
+    ).toLocaleDateString("fr-FR");
   };
 
   const getInformations = (mission) => {
-    if (mission.type === "intermittence") {
+    if (
+      mission.type === "intermittence"
+    ) {
       return `${mission.heures || 0} h${
         mission.cachets
           ? ` / ${mission.cachets} cachet(s)`
@@ -137,157 +165,338 @@ function Missions() {
       }`;
     }
 
-    return `${mission.montant_ht || 0} € HT / ${
+    return `${
+      mission.montant_ht || 0
+    } € HT / ${
       mission.nombre_jours || 0
     } jour(s)`;
   };
 
-  return (
-    <div>
-      <button>
-        <Link className="dashboard-link" to="/dashboard">
-          Retour au dashboard
-        </Link>
-      </button>
-      
-      <div className="header">
-        <h1>Missions</h1>
+  const getStatusLabel = (statut) => {
+    if (statut === "proposee") {
+      return "Proposée";
+    }
 
-        <button onClick={logout}>
+    if (statut === "confirmee") {
+      return "Confirmée";
+    }
+
+    if (statut === "terminee") {
+      return "Terminée";
+    }
+
+    return statut;
+  };
+
+  return (
+    <div className="missions-page">
+      <Link
+        className="missions-back-link"
+        to="/dashboard"
+      >
+        ← Retour au dashboard
+      </Link>
+
+      <div className="missions-header">
+        <div>
+          <h1>Missions</h1>
+
+          <p>
+            Gérez vos missions intermittentes
+            et freelance.
+          </p>
+        </div>
+
+        <button
+          className="missions-logout-button"
+          onClick={logout}
+        >
           Déconnexion
         </button>
       </div>
 
-        <button onClick={handleCreate}>
-            + Nouvelle mission
+      <div className="missions-toolbar">
+        <button
+          className="missions-create-button"
+          onClick={handleCreate}
+        >
+          + Nouvelle mission
         </button>
 
-        {showForm && (
-          <MissionForm
-            mission={selectedMission}
-            mode={formMode}
-            onClose={handleCloseForm}
-            onSuccess={fetchMissions}
-          />
-        )}
-
-        <div>
-            <label>Type : </label>
+        <div className="missions-filters">
+          <label>
+            <span>Type</span>
 
             <select
-                 value={type}
-                onChange={(e) => setType(e.target.value)}
+              value={type}
+              onChange={(e) =>
+                setType(e.target.value)
+              }
             >
-            <option value="">Tous</option>
-            <option value="intermittence">
+              <option value="">
+                Tous
+              </option>
+
+              <option value="intermittence">
                 Intermittence
-            </option>
-            <option value="freelance">
-                Freelance
-            </option>
-            </select>
-        </div>
+              </option>
 
-        <div>
-            <label>Statut : </label>
+              <option value="freelance">
+                Freelance
+              </option>
+            </select>
+          </label>
+
+          <label>
+            <span>Statut</span>
 
             <select
-            value={statut}
-            onChange={(e) => setStatut(e.target.value)}
+              value={statut}
+              onChange={(e) =>
+                setStatut(e.target.value)
+              }
             >
-            <option value="">Tous</option>
-            <option value="proposee">Proposée</option>
-            <option value="confirmee">Confirmée</option>
-            <option value="terminee">Terminée</option>
+              <option value="">
+                Tous
+              </option>
+
+              <option value="proposee">
+                Proposée
+              </option>
+
+              <option value="confirmee">
+                Confirmée
+              </option>
+
+              <option value="terminee">
+                Terminée
+              </option>
             </select>
+          </label>
         </div>
+      </div>
 
-        <div>
-          <span> 🔵Intermittence</span>
-          <span> 🟠Freelance</span>
+      <div className="missions-legend">
+        <span>
+          <span
+            className="
+              legend-circle
+              legend-blue
+            "
+          />
+
+          Intermittence
+        </span>
+
+        <span>
+          <span
+            className="
+              legend-circle
+              legend-orange
+            "
+          />
+
+          Freelance
+        </span>
+      </div>
+
+      {showForm && (
+        <MissionForm
+          mission={selectedMission}
+          mode={formMode}
+          onClose={handleCloseForm}
+          onSuccess={fetchMissions}
+        />
+      )}
+
+      {loading && (
+        <div className="missions-state">
+          Chargement...
         </div>
+      )}
 
-        {loading && <p>Chargement...</p>}
+      {error && (
+        <p className="missions-error">
+          {error}
+        </p>
+      )}
 
-        {error && <p>{error}</p>}
+      {!loading &&
+        missions.length === 0 && (
+          <div className="missions-empty">
+            <strong>
+              Aucune mission trouvée
+            </strong>
 
-        {!loading && missions.length === 0 && (
-            <p>Aucune mission trouvée.</p>
+            <p>
+              Modifiez les filtres ou
+              ajoutez une nouvelle mission.
+            </p>
+          </div>
         )}
 
-        {!loading && missions.length > 0 && (
-            <table border="1">
-            <thead>
-                <tr>
-                <th>Client / Production</th>
-                <th>Dates</th>
-                <th>Type</th>
-                <th>Statut</th>
-                <th>Informations</th>
-                <th>Actions</th>
-                </tr>
-            </thead>
+      {!loading &&
+        missions.length > 0 && (
+          <div className="missions-table-card">
+            <div className="missions-table-header">
+              <h2>Liste des missions</h2>
 
-            <tbody>
-                {missions.map((mission) => (
-                <tr key={mission._id}>
-                    <td>{mission.client_production}</td>
+              <p>
+                {missions.length} mission
+                {missions.length > 1
+                  ? "s"
+                  : ""}
+              </p>
+            </div>
 
-                    <td>
-                    {formatDate(mission.date_debut)}
-                    {" - "}
-                    {formatDate(mission.date_fin)}
-                    </td>
+            <div className="missions-table-wrapper">
+              <table className="missions-table">
+                <thead>
+                  <tr>
+                    <th>
+                      Client / Production
+                    </th>
 
-                    <td>
-                    <span
-                      className={`c-color ${
-                        mission.type === "intermittence"
-                          ? "event-intermittence"
-                          : "event-freelance"
-                      }`}
-                    >
-                      {mission.type === "intermittence"
-                        ? "Intermittence"
-                        : "Freelance"}
-                    </span>
-                  </td>
+                    <th>Dates</th>
+                    <th>Type</th>
+                    <th>Statut</th>
+                    <th>Informations</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
 
-                    <td>
-                    {mission.statut === "proposee" &&
-                        "Proposée"}
+                <tbody>
+                  {missions.map(
+                    (mission) => (
+                      <tr key={mission._id}>
+                        <td>
+                          <strong className="mission-client">
+                            {
+                              mission.client_production
+                            }
+                          </strong>
+                        </td>
 
-                    {mission.statut === "confirmee" &&
-                        "Confirmée"}
+                        <td>
+                          <div className="mission-dates">
+                            <span>
+                              {formatDate(
+                                mission.date_debut
+                              )}
+                            </span>
 
-                    {mission.statut === "terminee" &&
-                        "Terminée"}
-                    </td>
+                            <span className="date-arrow">
+                              →
+                            </span>
 
-                    <td>{getInformations(mission)}</td>
+                            <span>
+                              {formatDate(
+                                mission.date_fin
+                              )}
+                            </span>
+                          </div>
+                        </td>
 
-                    <td>
-                      
-                    <button onClick={() => handleView(mission)}>
-                      Voir
-                    </button>
+                        <td>
+                          <span
+                            className={`mission-type-badge ${
+                              mission.type ===
+                              "intermittence"
+                                ? "mission-type-intermittence"
+                                : "mission-type-freelance"
+                            }`}
+                          >
+                            {mission.type ===
+                            "intermittence"
+                              ? "Intermittence"
+                              : "Freelance"}
+                          </span>
+                        </td>
 
-                    <button onClick={() => handleEdit(mission)}>
-                      Modifier
-                    </button>
+                        <td>
+                          <span
+                            className={`mission-status-badge status-${mission.statut}`}
+                          >
+                            {getStatusLabel(
+                              mission.statut
+                            )}
+                          </span>
+                        </td>
 
-                    <button onClick={() => handleGeneratePdf(mission)}>
-                      Générer PDF
-                    </button>
+                        <td>
+                          <span className="mission-information">
+                            {getInformations(
+                              mission
+                            )}
+                          </span>
+                        </td>
 
-                    <button onClick={() => handleDelete(mission._id)}>
-                        Supprimer
-                    </button>
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-            </table>
+                        <td>
+                          <div className="mission-actions">
+                            <button
+                              className="
+                                action-button
+                                action-view
+                              "
+                              onClick={() =>
+                                handleView(
+                                  mission
+                                )
+                              }
+                            >
+                              Voir
+                            </button>
+
+                            <button
+                              className="
+                                action-button
+                                action-edit
+                              "
+                              onClick={() =>
+                                handleEdit(
+                                  mission
+                                )
+                              }
+                            >
+                              Modifier
+                            </button>
+
+                            <button
+                              className="
+                                action-button
+                                action-pdf
+                              "
+                              onClick={() =>
+                                handleGeneratePdf(
+                                  mission
+                                )
+                              }
+                            >
+                              Générer PDF
+                            </button>
+
+                            <button
+                              className="
+                                action-button
+                                action-delete
+                              "
+                              onClick={() =>
+                                handleDelete(
+                                  mission._id
+                                )
+                              }
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
     </div>
   );

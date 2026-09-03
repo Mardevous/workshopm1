@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list";
@@ -7,6 +8,7 @@ import MissionForm from "../components/MissionForm";
 import { getMissions } from "../services/missionService";
 
 function Calendar() {
+    const navigate = useNavigate();
     const [missions, setMissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -15,6 +17,11 @@ function Calendar() {
     const [showForm, setShowForm] = useState(false);
     const [formMode, setFormMode] = useState(null);
     const [selectedMission, setSelectedMission] = useState(null);
+
+    const logout = () => {
+        localStorage.removeItem("token");
+        navigate("/login");
+    };
 
     const fetchMissions = async () => {
         try {
@@ -100,6 +107,17 @@ function Calendar() {
 
     return (
         <div>
+            <div className="header">
+                <button>
+                    <Link className="dashboard-link" to="/dashboard">
+                        Retour au dashboard
+                    </Link>
+                </button>
+                <button onClick={logout}>
+                    Déconnexion
+                </button>
+            </div>
+            
             <label>Type: </label>
             <select
             value={type}
