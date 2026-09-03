@@ -142,3 +142,13 @@
     grid-template-columns: 1fr;
   }
 }
+
+.event-intermittence {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+}
+
+.event-freelance {
+    background-color: #f59e0b !important;
+    border-color: #f59e0b !important;
+}
