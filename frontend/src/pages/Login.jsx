@@ -1,15 +1,32 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login } from "../services/authService";
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  login,
+} from "../services/authService";
 
 function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  // Adresse email
+  const [email, setEmail] =
+    useState("");
 
+  // Mot de passe
+  const [password, setPassword] =
+    useState("");
+
+  // Message d'erreur
+  const [error, setError] =
+    useState("");
+
+  // État du chargement
+  const [loading, setLoading] =
+    useState(false);
+
+  // Envoyer le formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -17,12 +34,22 @@ function Login() {
     setLoading(true);
 
     try {
-      const data = await login(email, password);
+      // Connecter l'utilisateur
+      const data = await login(
+        email,
+        password
+      );
 
-      localStorage.setItem("token", data.token);
+      // Enregistrer le token
+      localStorage.setItem(
+        "token",
+        data.token
+      );
 
+      // Aller au tableau de bord
       navigate("/dashboard");
     } catch (error) {
+      // Afficher l'erreur
       setError(
         error.response?.data?.message ||
           "Erreur lors de la connexion"
@@ -33,40 +60,94 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>Connexion</h1>
+    // Page de connexion
+    <div className="login-page">
+      <div className="login-card">
+        {/* En-tête */}
+        <div className="login-header">
+          {/* Logo */}
+          <div className="login-logo">
+            F
+          </div>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email</label>
-          <br />
+          <h1>Connexion</h1>
 
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <p>
+            Connectez-vous pour gérer
+            votre activité.
+          </p>
         </div>
 
-        <div>
-          <label>Mot de passe</label>
-          <br />
+        {/* Formulaire */}
+        <form
+          className="login-form"
+          onSubmit={handleSubmit}
+        >
+          {/* Champ email */}
+          <div className="login-field">
+            <label htmlFor="email">
+              Email
+            </label>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+              placeholder="exemple@email.fr"
+              autoComplete="email"
+              required
+            />
+          </div>
 
-        {error && <p>{error}</p>}
+          {/* Champ mot de passe */}
+          <div className="login-field">
+            <label htmlFor="password">
+              Mot de passe
+            </label>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Connexion..." : "Se connecter"}
-        </button>
-      </form>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) =>
+                setPassword(
+                  e.target.value
+                )
+              }
+              placeholder="Votre mot de passe"
+              autoComplete="current-password"
+              required
+            />
+          </div>
+
+          {/* Message d'erreur */}
+          {error && (
+            <p className="login-error">
+              {error}
+            </p>
+          )}
+
+          {/* Bouton de connexion */}
+          <button
+            className="login-button"
+            type="submit"
+            disabled={loading}
+          >
+            {loading
+              ? "Connexion..."
+              : "Se connecter"}
+          </button>
+        </form>
+
+        {/* Pied de page */}
+        <p className="login-footer">
+          Fassil — Gestion des missions
+          intermittentes et freelance
+        </p>
+      </div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import {
   updatePortfolioProject,
 } from "../services/portfolioService";
 
+// Formulaire vide
 const emptyForm = {
   titre: "",
   description: "",
@@ -19,15 +20,16 @@ function PortfolioForm({
   onClose,
   onSuccess,
 }) {
-  const [form, setForm] =
-    useState(emptyForm);
+  // Données du formulaire
+  const [form, setForm] = useState(emptyForm);
 
-  const [error, setError] =
-    useState("");
+  // Message d'erreur
+  const [error, setError] = useState("");
 
-  const [loading, setLoading] =
-    useState(false);
+  // État du chargement
+  const [loading, setLoading] = useState(false);
 
+  // Formater la date
   const formatDateForInput = (date) => {
     if (!date) return "";
 
@@ -36,6 +38,7 @@ function PortfolioForm({
       .split("T")[0];
   };
 
+  // Remplir le formulaire
   useEffect(() => {
     if (project) {
       setForm({
@@ -55,6 +58,7 @@ function PortfolioForm({
           project.lien_video || "",
       });
     } else {
+      // Réinitialiser le formulaire
       setForm({
         ...emptyForm,
       });
@@ -63,6 +67,7 @@ function PortfolioForm({
     setError("");
   }, [project, mode]);
 
+  // Modifier un champ
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -72,9 +77,11 @@ function PortfolioForm({
     }));
   };
 
+  // Envoyer le formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Bloquer en mode lecture
     if (mode === "view") {
       return;
     }
@@ -83,6 +90,7 @@ function PortfolioForm({
     setLoading(true);
 
     try {
+      // Préparer les données
       const data = {
         titre: form.titre,
         description: form.description,
@@ -91,6 +99,7 @@ function PortfolioForm({
         lien_video: form.lien_video,
       };
 
+      // Modifier ou créer
       if (mode === "edit") {
         await updatePortfolioProject(
           project._id,
@@ -102,12 +111,15 @@ function PortfolioForm({
         );
       }
 
+      // Actualiser la liste
       if (onSuccess) {
         await onSuccess();
       }
 
+      // Fermer le formulaire
       onClose();
     } catch (error) {
+      // Afficher l'erreur
       setError(
         error.response?.data?.message ||
           error.response?.data?.error ||
@@ -121,6 +133,7 @@ function PortfolioForm({
   };
 
   return (
+    // Fenêtre du formulaire
     <div
       className="mission-form-overlay"
       onMouseDown={onClose}
@@ -134,8 +147,10 @@ function PortfolioForm({
           e.stopPropagation()
         }
       >
+        {/* En-tête */}
         <div className="mission-form-header">
           <div>
+            {/* Titre selon le mode */}
             <h2>
               {mode === "create" &&
                 "Nouveau projet"}
@@ -147,6 +162,7 @@ function PortfolioForm({
                 "Modifier le projet"}
             </h2>
 
+            {/* Description selon le mode */}
             <p>
               {mode === "create" &&
                 "Ajoutez un projet à votre portfolio."}
@@ -160,13 +176,16 @@ function PortfolioForm({
           </div>
         </div>
 
+        {/* Formulaire */}
         <form
           className="mission-form"
           onSubmit={handleSubmit}
         >
+          {/* Désactiver en mode lecture */}
           <fieldset
             disabled={mode === "view"}
           >
+            {/* Titre du projet */}
             <div className="mission-form-field">
               <label htmlFor="titre">
                 Titre
@@ -183,6 +202,7 @@ function PortfolioForm({
               />
             </div>
 
+            {/* Description du projet */}
             <div className="mission-form-field">
               <label htmlFor="description">
                 Description
@@ -197,6 +217,7 @@ function PortfolioForm({
               />
             </div>
 
+            {/* Date et type */}
             <div className="portfolio-form-grid">
               <div className="mission-form-field">
                 <label htmlFor="date">
@@ -235,6 +256,7 @@ function PortfolioForm({
               </div>
             </div>
 
+            {/* Lien de la vidéo */}
             <div className="mission-form-field">
               <label htmlFor="lien_video">
                 Lien vidéo
@@ -257,12 +279,14 @@ function PortfolioForm({
             </div>
           </fieldset>
 
+          {/* Message d'erreur */}
           {error && (
             <p className="mission-form-error">
               {error}
             </p>
           )}
 
+          {/* Boutons */}
           <div className="mission-form-actions">
             <button
               type="button"
@@ -274,6 +298,7 @@ function PortfolioForm({
                 : "Annuler"}
             </button>
 
+            {/* Bouton d'enregistrement */}
             {mode !== "view" && (
               <button
                 type="submit"

@@ -20,44 +20,55 @@ import DocumentForm from "../components/DocumentForm";
 function Documents() {
   const navigate = useNavigate();
 
+  // Liste des documents
   const [documents, setDocuments] =
     useState([]);
 
+  // Liste des missions
   const [missions, setMissions] =
     useState([]);
 
+  // Filtre par catégorie
   const [
     filterCategorie,
     setFilterCategorie,
   ] = useState("");
 
+  // Filtre par mission
   const [
     filterMission,
     setFilterMission,
   ] = useState("");
 
+  // Recherche d'une mission
   const [
     missionSearch,
     setMissionSearch,
   ] = useState("");
 
+  // Affichage de la liste
   const [
     showMissionDropdown,
     setShowMissionDropdown,
   ] = useState(false);
 
+  // Affichage du formulaire
   const [showForm, setShowForm] =
     useState(false);
 
+  // État du chargement
   const [loading, setLoading] =
     useState(true);
 
+  // Message d'erreur
   const [error, setError] =
     useState("");
 
+  // Message de succès
   const [message, setMessage] =
     useState("");
 
+  // Récupérer les documents
   const fetchDocuments = async () => {
     try {
       setLoading(true);
@@ -79,6 +90,7 @@ function Documents() {
     }
   };
 
+  // Récupérer les missions
   const fetchMissions = async () => {
     try {
       const data = await getMissions();
@@ -92,10 +104,12 @@ function Documents() {
     }
   };
 
+  // Charger les missions
   useEffect(() => {
     fetchMissions();
   }, []);
 
+  // Actualiser les documents
   useEffect(() => {
     fetchDocuments();
   }, [
@@ -103,11 +117,13 @@ function Documents() {
     filterMission,
   ]);
 
+  // Déconnecter l'utilisateur
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  // Formater une date
   const formatDate = (date) => {
     if (!date) {
       return "";
@@ -118,6 +134,7 @@ function Documents() {
     ).toLocaleDateString("fr-FR");
   };
 
+  // Formater une catégorie
   const formatCategorie = (
     categorie
   ) => {
@@ -138,6 +155,7 @@ function Documents() {
     );
   };
 
+  // Trouver le nom du filtre
   const selectedMissionLabel = (() => {
     if (!filterMission) {
       return "Toutes les missions";
@@ -161,6 +179,7 @@ function Documents() {
     );
   })();
 
+  // Filtrer les missions
   const filteredMissions =
     missions.filter((mission) =>
       mission.client_production
@@ -172,6 +191,7 @@ function Documents() {
         )
     );
 
+  // Sélectionner une mission
   const selectMission = (
     missionId,
     missionName
@@ -181,6 +201,7 @@ function Documents() {
     setShowMissionDropdown(false);
   };
 
+  // Actualiser après un ajout
   const handleUploadSuccess =
     async () => {
       setMessage(
@@ -190,6 +211,7 @@ function Documents() {
       await fetchDocuments();
     };
 
+  // Ouvrir un document
   const handleView = async (
     document
   ) => {
@@ -200,6 +222,7 @@ function Documents() {
         document._id
       );
 
+      // Créer le fichier
       const fileBlob = new Blob(
         [blob],
         {
@@ -209,11 +232,13 @@ function Documents() {
         }
       );
 
+      // Créer une URL temporaire
       const url =
         window.URL.createObjectURL(
           fileBlob
         );
 
+      // Ouvrir dans un nouvel onglet
       const previewWindow =
         window.open(url, "_blank");
 
@@ -223,6 +248,7 @@ function Documents() {
         );
       }
 
+      // Supprimer l'URL temporaire
       setTimeout(() => {
         window.URL.revokeObjectURL(
           url
@@ -236,6 +262,7 @@ function Documents() {
     }
   };
 
+  // Télécharger un document
   const handleDownload = async (
     document
   ) => {
@@ -247,6 +274,7 @@ function Documents() {
           document._id
         );
 
+      // Créer le fichier
       const fileBlob = new Blob(
         [blob],
         {
@@ -256,11 +284,13 @@ function Documents() {
         }
       );
 
+      // Créer une URL temporaire
       const url =
         window.URL.createObjectURL(
           fileBlob
         );
 
+      // Créer un lien
       const link =
         window.document.createElement(
           "a"
@@ -273,6 +303,7 @@ function Documents() {
         link
       );
 
+      // Lancer le téléchargement
       link.click();
       link.remove();
 
@@ -285,6 +316,7 @@ function Documents() {
     }
   };
 
+  // Supprimer un document
   const handleDelete = async (id) => {
     const confirmation =
       window.confirm(
@@ -316,6 +348,7 @@ function Documents() {
 
   return (
     <div className="documents-page">
+      {/* Retour au tableau de bord */}
       <Link
         className="documents-back-link"
         to="/dashboard"
@@ -323,6 +356,7 @@ function Documents() {
         ← Retour au dashboard
       </Link>
 
+      {/* En-tête */}
       <div className="documents-header">
         <div>
           <h1>Documents</h1>
@@ -342,7 +376,9 @@ function Documents() {
         </button>
       </div>
 
+      {/* Outils et filtres */}
       <div className="documents-toolbar">
+        {/* Bouton d'ajout */}
         <button
           className="documents-create-button"
           onClick={() => {
@@ -354,7 +390,9 @@ function Documents() {
           + Ajouter un document
         </button>
 
+        {/* Filtres */}
         <div className="documents-filters">
+          {/* Filtre par catégorie */}
           <label className="documents-filter">
             <span>Catégorie</span>
 
@@ -392,10 +430,12 @@ function Documents() {
             </select>
           </label>
 
+          {/* Filtre par mission */}
           <div className="documents-filter">
             <span>Mission</span>
 
             <div className="mission-dropdown">
+              {/* Recherche */}
               <input
                 type="text"
                 className="mission-dropdown-input"
@@ -438,9 +478,11 @@ function Documents() {
                 }}
               />
 
+              {/* Liste des missions */}
               {showMissionDropdown && (
                 <div className="mission-dropdown-panel">
                   <div className="mission-dropdown-options">
+                    {/* Toutes les missions */}
                     <button
                       type="button"
                       className="
@@ -457,6 +499,7 @@ function Documents() {
                       Toutes les missions
                     </button>
 
+                    {/* Documents sans mission */}
                     <button
                       type="button"
                       className="
@@ -473,6 +516,7 @@ function Documents() {
                       Documents globaux
                     </button>
 
+                    {/* Missions trouvées */}
                     {filteredMissions.map(
                       (mission) => (
                         <button
@@ -488,6 +532,7 @@ function Documents() {
                             )
                           }
                         >
+                          {/* Type de mission */}
                           <span
                             className={`document-mission-type ${
                               mission.type ===
@@ -502,12 +547,14 @@ function Documents() {
                               : "Freelance"}
                           </span>
 
+                          {/* Nom de la mission */}
                           <span className="mission-option-name">
                             {
                               mission.client_production
                             }
                           </span>
 
+                          {/* Dates de la mission */}
                           <span className="mission-option-date">
                             {formatDate(
                               mission.date_debut
@@ -523,6 +570,7 @@ function Documents() {
                       )
                     )}
 
+                    {/* Aucun résultat */}
                     {filteredMissions.length ===
                       0 && (
                       <p className="mission-option-empty">
@@ -538,6 +586,7 @@ function Documents() {
         </div>
       </div>
 
+      {/* Formulaire d'ajout */}
       {showForm && (
         <DocumentForm
           missions={missions}
@@ -550,24 +599,28 @@ function Documents() {
         />
       )}
 
+      {/* Message de succès */}
       {message && (
         <p className="documents-success">
           {message}
         </p>
       )}
 
+      {/* Message d'erreur */}
       {error && (
         <p className="documents-error">
           {error}
         </p>
       )}
 
+      {/* Chargement */}
       {loading && (
         <div className="documents-state">
           Chargement...
         </div>
       )}
 
+      {/* Aucun document */}
       {!loading &&
         documents.length === 0 && (
           <div className="documents-empty">
@@ -582,9 +635,11 @@ function Documents() {
           </div>
         )}
 
+      {/* Liste des documents */}
       {!loading &&
         documents.length > 0 && (
           <div className="documents-table-card">
+            {/* Informations de la liste */}
             <div className="documents-table-header">
               <div>
                 <h2>Mes documents</h2>
@@ -598,6 +653,7 @@ function Documents() {
               </div>
             </div>
 
+            {/* Tableau */}
             <div className="documents-table-wrapper">
               <table className="documents-table">
                 <thead>
@@ -611,6 +667,7 @@ function Documents() {
                 </thead>
 
                 <tbody>
+                  {/* Afficher les documents */}
                   {documents.map(
                     (document) => {
                       const mission =
@@ -622,12 +679,14 @@ function Documents() {
                             document._id
                           }
                         >
+                          {/* Nom */}
                           <td>
                             <strong className="document-name">
                               {document.nom}
                             </strong>
                           </td>
 
+                          {/* Catégorie */}
                           <td>
                             <span className="document-category">
                               {formatCategorie(
@@ -636,6 +695,7 @@ function Documents() {
                             </span>
                           </td>
 
+                          {/* Mission associée */}
                           <td>
                             {mission ? (
                               <div className="document-mission">
@@ -680,6 +740,7 @@ function Documents() {
                             )}
                           </td>
 
+                          {/* Taille du fichier */}
                           <td>
                             <span className="document-size">
                               {Math.round(
@@ -690,6 +751,7 @@ function Documents() {
                             </span>
                           </td>
 
+                          {/* Boutons d'action */}
                           <td>
                             <div className="document-actions">
                               <button

@@ -4,6 +4,10 @@ import {
   Link,
 } from "react-router-dom";
 import api from "../services/api";
+import {
+  getDashboard,
+  updateDashboardConfiguration,
+} from "../services/dashboardService";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -17,6 +21,13 @@ function Dashboard() {
   // Message d'erreur
   const [error, setError] = useState("");
 
+  // Paramètres de calcul
+  const [showSettings, setShowSettings] = useState(false);
+  const [seuilHeures, setSeuilHeures] = useState(507);
+  const [heuresParJour, setHeuresParJour] = useState(8);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsMessage, setSettingsMessage] = useState("");
+
   // Charger les données au démarrage
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -25,9 +36,21 @@ function Dashboard() {
         setError("");
 
         // Récupérer les données
-        const response = await api.get("/dashboard");
+        const data = await getDashboard();
 
-        setDashboard(response.data);
+        setDashboard(data);
+
+        // Mettre à jour les paramètres
+        setSeuilHeures(
+          data.configuration?.seuil_heures ??
+            data.intermittence?.seuil ??
+            507
+        );
+
+        setHeuresParJour(
+          data.configuration?.heures_par_jour ??
+            8
+        );
       } catch (error) {
         // Afficher l'erreur
         setError(
@@ -46,6 +69,50 @@ function Dashboard() {
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
+  };
+
+  // Enregistrer les paramètres de calcul
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+
+    try {
+      setSettingsLoading(true);
+      setSettingsMessage("");
+
+      // Modifier la configuration
+      await updateDashboardConfiguration(
+        seuilHeures,
+        heuresParJour
+      );
+
+      // Recharger les calculs du dashboard
+      const data = await getDashboard();
+
+      setDashboard(data);
+
+      // Mettre à jour les champs
+      setSeuilHeures(
+        data.configuration?.seuil_heures ??
+          data.intermittence?.seuil ??
+          507
+      );
+
+      setHeuresParJour(
+        data.configuration?.heures_par_jour ??
+          8
+      );
+
+      setSettingsMessage(
+        "Paramètres enregistrés avec succès."
+      );
+    } catch (error) {
+      setSettingsMessage(
+        error.response?.data?.message ||
+          "Erreur lors de l’enregistrement."
+      );
+    } finally {
+      setSettingsLoading(false);
+    }
   };
 
   // Calculer le CA total
@@ -109,6 +176,72 @@ function Dashboard() {
           Déconnexion
         </button>
       </header>
+
+      <section className="dashboard-settings">
+        <button
+          type="button"
+          onClick={() =>
+            setShowSettings(!showSettings)
+          }
+        >
+          ⚙ Paramètres
+        </button>
+
+        {showSettings && (
+          <form
+            className="dashboard-settings-form"
+            onSubmit={handleSaveSettings}
+          >
+            <div>
+              <label htmlFor="seuil-heures">
+                Seuil d’heures
+              </label>
+
+              <input
+                id="seuil-heures"
+                type="number"
+                min="1"
+                value={seuilHeures}
+                onChange={(e) =>
+                  setSeuilHeures(e.target.value)
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="heures-par-jour">
+                Heures par jour
+              </label>
+
+              <input
+                id="heures-par-jour"
+                type="number"
+                min="1"
+                max="24"
+                value={heuresParJour}
+                onChange={(e) =>
+                  setHeuresParJour(e.target.value)
+                }
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={settingsLoading}
+            >
+              {settingsLoading
+                ? "Enregistrement..."
+                : "Enregistrer"}
+            </button>
+
+            {settingsMessage && (
+              <p>{settingsMessage}</p>
+            )}
+          </form>
+        )}
+      </section>
 
       {/* Liens vers les pages */}
       <nav className="dashboard-buttons">
@@ -208,10 +341,8 @@ function Dashboard() {
                 <span>Freelance</span>
 
                 <small>
-                  {totalCaFreelance.toLocaleString(
-                    "fr-FR"
-                  )}{" "}
-                  €
+                  {dashboard.freelance.nombre_jours} jours ·{" "}
+                  {dashboard.freelance.heures} h
                 </small>
               </div>
             </div>

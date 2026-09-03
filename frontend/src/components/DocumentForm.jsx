@@ -8,31 +8,28 @@ function DocumentForm({
   onClose,
   onSuccess,
 }) {
-  const [file, setFile] =
-    useState(null);
+  // Fichier sélectionné
+  const [file, setFile] = useState(null);
 
-  const [categorie, setCategorie] =
-    useState("");
+  // Catégorie sélectionnée
+  const [categorie, setCategorie] = useState("");
 
-  const [missionId, setMissionId] =
-    useState("");
+  // Mission sélectionnée
+  const [missionId, setMissionId] = useState("");
 
-  const [
-    missionSearch,
-    setMissionSearch,
-  ] = useState("Document global");
+  // Texte de recherche
+  const [ missionSearch, setMissionSearch ] = useState("Document global");
 
-  const [
-    showMissionDropdown,
-    setShowMissionDropdown,
-  ] = useState(false);
+  // Affichage de la liste
+  const [ showMissionDropdown, setShowMissionDropdown ] = useState(false);
 
-  const [error, setError] =
-    useState("");
+  // Message d'erreur
+  const [error, setError] = useState("");
 
-  const [loading, setLoading] =
-    useState(false);
+  // État du chargement
+  const [loading, setLoading] = useState(false);
 
+  // Formater une date
   const formatDate = (date) => {
     if (!date) {
       return "";
@@ -43,6 +40,7 @@ function DocumentForm({
     ).toLocaleDateString("fr-FR");
   };
 
+  // Créer le texte d'une mission
   const getMissionLabel = (
     mission
   ) => {
@@ -64,15 +62,17 @@ function DocumentForm({
     )}`;
   };
 
+  // Trouver la mission sélectionnée
   const selectedMission =
     missions.find(
       (mission) =>
         mission._id === missionId
     ) || null;
 
-  const selectedMissionLabel =
-    getMissionLabel(selectedMission);
+  // Texte de la mission sélectionnée
+  const selectedMissionLabel = getMissionLabel(selectedMission);
 
+  // Filtrer les missions
   const filteredMissions =
     missions.filter((mission) =>
       mission.client_production
@@ -84,10 +84,12 @@ function DocumentForm({
         )
     );
 
+  // Sélectionner une mission
   const handleSelectMission = (
     mission
   ) => {
     if (!mission) {
+      // Choisir un document global
       setMissionId("");
 
       setMissionSearch(
@@ -101,14 +103,17 @@ function DocumentForm({
       );
     }
 
+    // Fermer la liste
     setShowMissionDropdown(false);
   };
 
+  // Envoyer le formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
 
+    // Vérifier le fichier
     if (!file) {
       setError(
         "Veuillez choisir un fichier."
@@ -117,6 +122,7 @@ function DocumentForm({
       return;
     }
 
+    // Vérifier la catégorie
     if (!categorie) {
       setError(
         "Veuillez choisir une catégorie."
@@ -125,6 +131,7 @@ function DocumentForm({
       return;
     }
 
+    // Préparer les données
     const formData = new FormData();
 
     formData.append("fichier", file);
@@ -134,6 +141,7 @@ function DocumentForm({
       categorie
     );
 
+    // Ajouter la mission
     if (missionId) {
       formData.append(
         "mission_id",
@@ -144,14 +152,18 @@ function DocumentForm({
     try {
       setLoading(true);
 
+      // Ajouter le document
       await addDocument(formData);
 
+      // Actualiser la liste
       if (onSuccess) {
         await onSuccess();
       }
 
+      // Fermer le formulaire
       onClose();
     } catch (error) {
+      // Afficher l'erreur
       setError(
         error.response?.data?.message ||
           error.response?.data?.error ||
@@ -163,6 +175,7 @@ function DocumentForm({
   };
 
   return (
+    // Fenêtre du formulaire
     <div
       className="mission-form-overlay"
       onMouseDown={onClose}
@@ -176,6 +189,7 @@ function DocumentForm({
           e.stopPropagation()
         }
       >
+        {/* En-tête */}
         <div className="mission-form-header">
           <div>
             <h2>
@@ -189,11 +203,13 @@ function DocumentForm({
           </div>
         </div>
 
+        {/* Formulaire */}
         <form
           className="mission-form"
           onSubmit={handleSubmit}
         >
           <fieldset disabled={loading}>
+            {/* Choix du fichier */}
             <div className="mission-form-field">
               <label htmlFor="document-file">
                 Fichier
@@ -221,6 +237,7 @@ function DocumentForm({
               </div>
             </div>
 
+            {/* Choix de la catégorie */}
             <div className="mission-form-field">
               <label htmlFor="document-category">
                 Catégorie
@@ -262,12 +279,14 @@ function DocumentForm({
               </select>
             </div>
 
+            {/* Choix de la mission */}
             <div className="mission-form-field document-mission-field">
               <label htmlFor="document-mission">
                 Mission
               </label>
 
               <div className="mission-dropdown">
+                {/* Recherche */}
                 <input
                   id="document-mission"
                   type="text"
@@ -309,9 +328,11 @@ function DocumentForm({
                   }}
                 />
 
+                {/* Liste des missions */}
                 {showMissionDropdown && (
                   <div className="mission-dropdown-panel">
                     <div className="mission-dropdown-options">
+                      {/* Document sans mission */}
                       <button
                         type="button"
                         className="
@@ -329,6 +350,7 @@ function DocumentForm({
                         Document global
                       </button>
 
+                      {/* Missions trouvées */}
                       {filteredMissions.map(
                         (mission) => (
                           <button
@@ -347,6 +369,7 @@ function DocumentForm({
                               );
                             }}
                           >
+                            {/* Type de mission */}
                             <span
                               className={`document-mission-type ${
                                 mission.type ===
@@ -361,12 +384,18 @@ function DocumentForm({
                                 : "Freelance"}
                             </span>
 
+                            <span> </span>
+
+                            {/* Nom de la mission */}
                             <span className="mission-option-name">
                               {
                                 mission.client_production
                               }
                             </span>
 
+                            <span> </span>
+
+                            {/* Dates de la mission */}
                             <span className="mission-option-date">
                               {formatDate(
                                 mission.date_debut
@@ -382,6 +411,7 @@ function DocumentForm({
                         )
                       )}
 
+                      {/* Aucun résultat */}
                       {filteredMissions.length ===
                         0 && (
                         <p className="mission-option-empty">
@@ -402,12 +432,14 @@ function DocumentForm({
             </div>
           </fieldset>
 
+          {/* Message d'erreur */}
           {error && (
             <p className="mission-form-error">
               {error}
             </p>
           )}
 
+          {/* Boutons */}
           <div className="mission-form-actions">
             <button
               type="button"

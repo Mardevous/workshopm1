@@ -3,7 +3,7 @@ const path = require("path");
 
 const Document = require("../models/Document");
 
-// 获取服务器中的文件路径
+// Obtenir le chemin du fichier
 const getFilePath = (document) => {
   const fileName = path.basename(
     document.file_url
@@ -20,6 +20,7 @@ const getFilePath = (document) => {
 // GET /api/documents
 exports.getDocuments = async (req, res) => {
   try {
+    // Récupérer les filtres
     const {
       categorie,
       mission_id,
@@ -27,31 +28,37 @@ exports.getDocuments = async (req, res) => {
 
     const filter = {};
 
+    // Filtrer par catégorie
     if (categorie) {
       filter.categorie = categorie;
     }
 
-    // 只查看全局 Documents
+    // Afficher les documents globaux
     if (mission_id === "global") {
       filter.mission_id = null;
     } else if (mission_id) {
-      // 查看属于某条 Mission 的 Documents
+      // Filtrer par mission
       filter.mission_id = mission_id;
     }
 
+    // Rechercher les documents
     const documents = await Document.find(
       filter
     )
+      // Ajouter les informations de la mission
       .populate(
         "mission_id",
         "client_production type date_debut date_fin"
       )
+      // Trier du plus récent au plus ancien
       .sort({
         createdAt: -1,
       });
 
+    // Retourner les documents
     res.status(200).json(documents);
   } catch (error) {
+    // Retourner une erreur
     res.status(500).json({
       message:
         "Erreur lors de la récupération des documents",
@@ -67,14 +74,16 @@ exports.createDocument = async (
   res
 ) => {
   try {
+    // Vérifier le fichier
     if (!req.file) {
       return res.status(400).json({
         message: "Aucun fichier envoyé",
       });
     }
 
+    // Vérifier la catégorie
     if (!req.body.categorie) {
-      // 数据创建失败时删除已经上传的文件
+      // Supprimer le fichier envoyé
       if (fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
       }
@@ -85,13 +94,14 @@ exports.createDocument = async (
       });
     }
 
+    // Créer le document
     const document = await Document.create({
       nom: req.file.originalname,
 
       categorie:
         req.body.categorie,
 
-      // 没有Mission时保存null
+      // Enregistrer null sans mission
       mission_id:
         req.body.mission_id || null,
 
@@ -104,9 +114,10 @@ exports.createDocument = async (
         req.file.mimetype,
     });
 
+    // Retourner le document
     res.status(201).json(document);
   } catch (error) {
-    // MongoDB保存失败时，避免留下无用文件
+    // Supprimer le fichier en cas d'erreur
     if (
       req.file?.path &&
       fs.existsSync(req.file.path)
@@ -129,20 +140,24 @@ exports.viewDocument = async (
   res
 ) => {
   try {
+    // Rechercher le document
     const document =
       await Document.findById(
         req.params.id
       );
 
+    // Vérifier le document
     if (!document) {
       return res.status(404).json({
         message: "Document introuvable",
       });
     }
 
+    // Obtenir le chemin du fichier
     const filePath =
       getFilePath(document);
 
+    // Vérifier le fichier
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({
         message:
@@ -150,7 +165,7 @@ exports.viewDocument = async (
       });
     }
 
-    // 在浏览器中直接预览
+    // Afficher dans le navigateur
     res.setHeader(
       "Content-Type",
       document.mime_type
@@ -165,6 +180,7 @@ exports.viewDocument = async (
 
     res.sendFile(filePath);
   } catch (error) {
+    // Retourner une erreur
     res.status(500).json({
       message:
         "Erreur lors de l'ouverture du document",
@@ -180,20 +196,24 @@ exports.downloadDocument = async (
   res
 ) => {
   try {
+    // Rechercher le document
     const document =
       await Document.findById(
         req.params.id
       );
 
+    // Vérifier le document
     if (!document) {
       return res.status(404).json({
         message: "Document introuvable",
       });
     }
 
+    // Obtenir le chemin du fichier
     const filePath =
       getFilePath(document);
 
+    // Vérifier le fichier
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({
         message:
@@ -201,11 +221,13 @@ exports.downloadDocument = async (
       });
     }
 
+    // Télécharger le fichier
     res.download(
       filePath,
       document.nom
     );
   } catch (error) {
+    // Retourner une erreur
     res.status(500).json({
       message:
         "Erreur lors du téléchargement du document",
@@ -221,33 +243,38 @@ exports.deleteDocument = async (
   res
 ) => {
   try {
+    // Rechercher le document
     const document =
       await Document.findById(
         req.params.id
       );
 
+    // Vérifier le document
     if (!document) {
       return res.status(404).json({
         message: "Document introuvable",
       });
     }
 
+    // Obtenir le chemin du fichier
     const filePath =
       getFilePath(document);
 
-    // 删除服务器中的真实文件
+    // Supprimer le fichier du serveur
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
 
-    // 删除MongoDB记录
+    // Supprimer le document de MongoDB
     await document.deleteOne();
 
+    // Retourner un message
     res.status(200).json({
       message:
         "Document supprimé avec succès",
     });
   } catch (error) {
+    // Retourner une erreur
     res.status(500).json({
       message:
         "Erreur lors de la suppression du document",

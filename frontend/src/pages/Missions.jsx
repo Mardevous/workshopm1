@@ -13,24 +13,31 @@ import MissionForm from "../components/MissionForm";
 function Missions() {
   const navigate = useNavigate();
 
+  // Liste des missions
   const [missions, setMissions] = useState([]);
 
+  // Filtres
   const [type, setType] = useState("");
   const [statut, setStatut] = useState("");
 
+  // Chargement et erreur
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Affichage du formulaire
   const [showForm, setShowForm] = useState(false);
 
+  // Mission sélectionnée
   const [
     selectedMission,
     setSelectedMission,
   ] = useState(null);
 
+  // Mode du formulaire
   const [formMode, setFormMode] =
     useState("create");
 
+  // Récupérer les missions
   const fetchMissions = async () => {
     try {
       setLoading(true);
@@ -43,6 +50,7 @@ function Missions() {
 
       setMissions(data);
     } catch (error) {
+      // Afficher l'erreur
       setError(
         error.response?.data?.message ||
           "Erreur lors du chargement des missions"
@@ -52,6 +60,7 @@ function Missions() {
     }
   };
 
+  // Générer le PDF
   const handleGeneratePdf = async (
     mission
   ) => {
@@ -63,16 +72,19 @@ function Missions() {
           mission._id
         );
 
+      // Créer une URL temporaire
       const pdfUrl =
         window.URL.createObjectURL(
           pdfBlob
         );
 
+      // Créer un lien
       const link =
         document.createElement("a");
 
       link.href = pdfUrl;
 
+      // Nettoyer le nom du client
       const safeClientName =
         mission.client_production
           ?.replace(
@@ -85,11 +97,13 @@ function Missions() {
 
       document.body.appendChild(link);
 
+      // Télécharger le PDF
       link.click();
       link.remove();
 
       window.URL.revokeObjectURL(pdfUrl);
     } catch (error) {
+      // Afficher l'erreur
       setError(
         error.response?.data?.message ||
           "Erreur lors de la génération du PDF"
@@ -97,39 +111,46 @@ function Missions() {
     }
   };
 
+  // Actualiser avec les filtres
   useEffect(() => {
     fetchMissions();
   }, [type, statut]);
 
+  // Déconnecter l'utilisateur
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  // Ouvrir le formulaire de création
   const handleCreate = () => {
     setSelectedMission(null);
     setFormMode("create");
     setShowForm(true);
   };
 
+  // Afficher une mission
   const handleView = (mission) => {
     setSelectedMission(mission);
     setFormMode("view");
     setShowForm(true);
   };
 
+  // Modifier une mission
   const handleEdit = (mission) => {
     setSelectedMission(mission);
     setFormMode("edit");
     setShowForm(true);
   };
 
+  // Fermer le formulaire
   const handleCloseForm = () => {
     setShowForm(false);
     setSelectedMission(null);
     setFormMode("create");
   };
 
+  // Supprimer une mission
   const handleDelete = async (id) => {
     const confirmation = window.confirm(
       "Voulez-vous vraiment supprimer cette mission ?"
@@ -141,6 +162,7 @@ function Missions() {
       await deleteMission(id);
       await fetchMissions();
     } catch (error) {
+      // Afficher l'erreur
       setError(
         error.response?.data?.message ||
           "Erreur lors de la suppression"
@@ -148,12 +170,14 @@ function Missions() {
     }
   };
 
+  // Formater une date
   const formatDate = (date) => {
     return new Date(
       date
     ).toLocaleDateString("fr-FR");
   };
 
+  // Formater les informations
   const getInformations = (mission) => {
     if (
       mission.type === "intermittence"
@@ -172,6 +196,7 @@ function Missions() {
     } jour(s)`;
   };
 
+  // Formater le statut
   const getStatusLabel = (statut) => {
     if (statut === "proposee") {
       return "Proposée";
@@ -190,6 +215,7 @@ function Missions() {
 
   return (
     <div className="missions-page">
+      {/* Retour au tableau de bord */}
       <Link
         className="missions-back-link"
         to="/dashboard"
@@ -197,6 +223,7 @@ function Missions() {
         ← Retour au dashboard
       </Link>
 
+      {/* En-tête */}
       <div className="missions-header">
         <div>
           <h1>Missions</h1>
@@ -215,7 +242,9 @@ function Missions() {
         </button>
       </div>
 
+      {/* Outils et filtres */}
       <div className="missions-toolbar">
+        {/* Bouton de création */}
         <button
           className="missions-create-button"
           onClick={handleCreate}
@@ -223,7 +252,9 @@ function Missions() {
           + Nouvelle mission
         </button>
 
+        {/* Filtres */}
         <div className="missions-filters">
+          {/* Filtre par type */}
           <label>
             <span>Type</span>
 
@@ -247,6 +278,7 @@ function Missions() {
             </select>
           </label>
 
+          {/* Filtre par statut */}
           <label>
             <span>Statut</span>
 
@@ -276,6 +308,7 @@ function Missions() {
         </div>
       </div>
 
+      {/* Légende des couleurs */}
       <div className="missions-legend">
         <span>
           <span
@@ -300,6 +333,7 @@ function Missions() {
         </span>
       </div>
 
+      {/* Formulaire de mission */}
       {showForm && (
         <MissionForm
           mission={selectedMission}
@@ -309,18 +343,21 @@ function Missions() {
         />
       )}
 
+      {/* Chargement */}
       {loading && (
         <div className="missions-state">
           Chargement...
         </div>
       )}
 
+      {/* Message d'erreur */}
       {error && (
         <p className="missions-error">
           {error}
         </p>
       )}
 
+      {/* Aucune mission */}
       {!loading &&
         missions.length === 0 && (
           <div className="missions-empty">
@@ -335,9 +372,11 @@ function Missions() {
           </div>
         )}
 
+      {/* Liste des missions */}
       {!loading &&
         missions.length > 0 && (
           <div className="missions-table-card">
+            {/* Informations de la liste */}
             <div className="missions-table-header">
               <h2>Liste des missions</h2>
 
@@ -349,6 +388,7 @@ function Missions() {
               </p>
             </div>
 
+            {/* Tableau */}
             <div className="missions-table-wrapper">
               <table className="missions-table">
                 <thead>
@@ -366,9 +406,11 @@ function Missions() {
                 </thead>
 
                 <tbody>
+                  {/* Afficher les missions */}
                   {missions.map(
                     (mission) => (
                       <tr key={mission._id}>
+                        {/* Client */}
                         <td>
                           <strong className="mission-client">
                             {
@@ -377,6 +419,7 @@ function Missions() {
                           </strong>
                         </td>
 
+                        {/* Dates */}
                         <td>
                           <div className="mission-dates">
                             <span>
@@ -397,6 +440,7 @@ function Missions() {
                           </div>
                         </td>
 
+                        {/* Type */}
                         <td>
                           <span
                             className={`mission-type-badge ${
@@ -413,6 +457,7 @@ function Missions() {
                           </span>
                         </td>
 
+                        {/* Statut */}
                         <td>
                           <span
                             className={`mission-status-badge status-${mission.statut}`}
@@ -423,6 +468,7 @@ function Missions() {
                           </span>
                         </td>
 
+                        {/* Informations */}
                         <td>
                           <span className="mission-information">
                             {getInformations(
@@ -431,6 +477,7 @@ function Missions() {
                           </span>
                         </td>
 
+                        {/* Boutons d'action */}
                         <td>
                           <div className="mission-actions">
                             <button

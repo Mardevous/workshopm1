@@ -341,10 +341,653 @@
   }
 }
 
+/* ============================= */
+/* Paramètres du tableau de bord */
+/* ============================= */
+
+.dashboard-settings {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  margin: 15px 0 35px;
+}
+
+/* Bouton Paramètres */
+.dashboard-settings > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 20px;
+
+  color: #087f9c;
+  font-size: 16px;
+  font-weight: 700;
+
+  background-color: #ffffff;
+  border: 1px solid #72bdd0;
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-settings > button:hover {
+  color: #ffffff;
+  background-color: #72bdd0;
+
+  box-shadow: 0 6px 15px
+    rgba(41, 139, 163, 0.2);
+
+  transform: translateY(-1px);
+}
+
+/* Formulaire de paramètres */
+.dashboard-settings-form {
+  position: static;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 18px;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 18px;
+  padding: 24px 28px;
+
+  background-color: #ffffff;
+  border: 1px solid #dbe3ed;
+  border-radius: 16px;
+
+  box-shadow: 0 8px 25px
+    rgba(31, 50, 73, 0.08);
+}
+
+/* Groupes label + input */
+.dashboard-settings-form > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboard-settings-form label {
+  color: #26364d;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.dashboard-settings-form input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  color: #172033;
+  font-size: 16px;
+
+  background-color: #ffffff;
+  border: 1px solid #cad5e2;
+  border-radius: 9px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-settings-form input:focus {
+  border-color: #72bdd0;
+
+  box-shadow: 0 0 0 3px
+    rgba(114, 189, 208, 0.2);
+}
+
+/* Bouton Enregistrer */
+.dashboard-settings-form button[type="submit"] {
+  min-height: 46px;
+
+  padding: 12px 24px;
+
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+
+  background-color: #72bdd0;
+  border: none;
+  border-radius: 9px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dashboard-settings-form
+  button[type="submit"]:hover:not(:disabled) {
+  background-color: #4ca9c0;
+  transform: translateY(-1px);
+}
+
+.dashboard-settings-form
+  button[type="submit"]:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Message */
+.dashboard-settings-form > p {
+  grid-column: 1 / -1;
+
+  margin: 0;
+
+  color: #087f9c;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Tablette et téléphone */
+@media (max-width: 800px) {
+  .dashboard-settings {
+    align-items: stretch;
+    margin: 0 0 25px;
+  }
+
+  .dashboard-settings > button {
+    width: 100%;
+  }
+
+  .dashboard-settings-form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .dashboard-settings-form
+    button[type="submit"] {
+    width: 100%;
+  }
+}
 /* =========================
-   mission
+   PAGE CALENDRIER
 ========================= */
 
+.calendar-page {
+  width: 100%;
+  min-height: 100vh;
+
+  padding: 32px 40px 55px;
+  box-sizing: border-box;
+
+  background-color: #f5f7fa;
+  color: #222222;
+}
+
+/* Retour au dashboard */
+
+.calendar-back-link {
+  display: inline-block;
+
+  margin-bottom: 25px;
+
+  color: #338ca5;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.calendar-back-link:hover {
+  text-decoration: underline;
+}
+
+/* En-tête */
+
+.calendar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.calendar-header h1 {
+  margin: 0;
+
+  font-size: 36px;
+}
+
+.calendar-header p {
+  margin: 8px 0 0;
+
+  color: #667085;
+}
+
+/* Déconnexion */
+
+.calendar-logout-button {
+  padding: 9px 18px;
+
+  border: 1px solid #cbd2dc;
+  border-radius: 7px;
+
+  background-color: #ffffff;
+  color: #222222;
+
+  cursor: pointer;
+}
+
+.calendar-logout-button:hover {
+  background-color: #f1f3f5;
+}
+
+/* Barre des filtres */
+
+.calendar-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 25px;
+
+  margin: 35px 0 25px;
+  padding: 22px 25px;
+
+  border: 1px solid #e2e7ee;
+  border-radius: 13px;
+
+  background-color: #ffffff;
+
+  box-shadow: 0 5px 15px
+    rgba(25, 39, 60, 0.06);
+}
+
+/* Filtres */
+
+.calendar-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.calendar-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.calendar-filters label span {
+  color: #475467;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.calendar-filters select {
+  min-width: 190px;
+  height: 42px;
+
+  padding: 0 12px;
+
+  border: 1px solid #cbd2dc;
+  border-radius: 7px;
+
+  background-color: #ffffff;
+  color: #222222;
+
+  font-size: 15px;
+  outline: none;
+
+  cursor: pointer;
+}
+
+.calendar-filters select:focus {
+  border-color: #72bdd1;
+
+  box-shadow: 0 0 0 3px
+    rgba(114, 189, 209, 0.2);
+}
+
+/* Légende */
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.calendar-legend > span {
+  display: flex;
+  align-items: center;
+
+  color: #475467;
+  font-size: 14px;
+}
+
+.calendar-legend-circle {
+  width: 11px;
+  height: 11px;
+
+  margin-right: 7px;
+
+  border-radius: 50%;
+}
+
+.calendar-legend-blue {
+  background-color: #4285f4;
+}
+
+.calendar-legend-orange {
+  background-color: #f5a623;
+}
+
+/* Chargement */
+
+.calendar-state {
+  padding: 50px 25px;
+
+  border: 1px solid #e2e7ee;
+  border-radius: 13px;
+
+  background-color: #ffffff;
+  color: #667085;
+
+  text-align: center;
+}
+
+/* Erreur */
+
+.calendar-error {
+  padding: 13px 16px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background-color: #fef2f2;
+  color: #b42318;
+}
+
+/* Conteneur du calendrier */
+
+.calendar-card {
+  padding: 25px;
+
+  border: 1px solid #e2e7ee;
+  border-radius: 13px;
+
+  background-color: #ffffff;
+
+  box-shadow: 0 5px 17px
+    rgba(25, 39, 60, 0.07);
+}
+
+/* =========================
+   FULLCALENDAR
+========================= */
+
+.calendar-card .fc {
+  color: #344054;
+
+  font-family: inherit;
+}
+
+/* Titre du mois */
+
+.calendar-card
+  .fc-toolbar-title {
+  color: #222222;
+
+  font-size: 24px;
+}
+
+/* Boutons généraux */
+
+.calendar-card .fc-button {
+  padding: 8px 13px !important;
+
+  border: 1px solid #72bdd1 !important;
+  border-radius: 7px !important;
+
+  background-color: #72bdd1 !important;
+  color: #ffffff !important;
+
+  font-weight: 600 !important;
+
+  box-shadow: none !important;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease !important;
+}
+
+.calendar-card
+  .fc-button:hover {
+  border-color: #54a8bf !important;
+  background-color: #54a8bf !important;
+}
+
+/* Bouton actif */
+
+.calendar-card
+  .fc-button-active {
+  border-color: #338ca5 !important;
+  background-color: #338ca5 !important;
+}
+
+/* Bouton désactivé */
+
+.calendar-card
+  .fc-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Bordures du calendrier */
+
+.calendar-card
+  .fc-theme-standard td,
+.calendar-card
+  .fc-theme-standard th,
+.calendar-card
+  .fc-theme-standard
+  .fc-scrollgrid {
+  border-color: #e2e7ee;
+}
+
+/* En-tête des jours */
+
+.calendar-card
+  .fc-col-header-cell {
+  background-color: #f8fafc;
+}
+
+.calendar-card
+  .fc-col-header-cell-cushion {
+  padding: 12px 5px;
+
+  color: #475467;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+/* Numéro du jour */
+
+.calendar-card
+  .fc-daygrid-day-number {
+  padding: 8px;
+
+  color: #475467;
+  text-decoration: none;
+}
+
+/* Jour actuel */
+
+.calendar-card
+  .fc-day-today {
+  background-color: #f2fbfd !important;
+}
+
+/* Événements */
+
+.calendar-card .fc-event {
+  margin: 2px 4px;
+  padding: 3px 5px;
+
+  border: none;
+  border-radius: 5px;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.calendar-card
+  .fc-event:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* Intermittence */
+
+.calendar-card
+  .event-intermittence {
+  border-color: #4285f4 !important;
+  background-color: #4285f4 !important;
+  color: #ffffff !important;
+}
+
+/* Freelance */
+
+.calendar-card
+  .event-freelance {
+  border-color: #f5a623 !important;
+  background-color: #f5a623 !important;
+  color: #ffffff !important;
+}
+
+/* Texte des événements */
+
+.calendar-card
+  .fc-event-title,
+.calendar-card
+  .fc-event-time {
+  color: #ffffff;
+}
+
+/* Vue liste */
+
+.calendar-card
+  .fc-list-day-cushion {
+  background-color: #f8fafc;
+}
+
+.calendar-card
+  .fc-list-day-text,
+.calendar-card
+  .fc-list-day-side-text {
+  color: #344054;
+  text-decoration: none;
+}
+
+.calendar-card
+  .fc-list-event:hover td {
+  background-color: #f5f9fb;
+}
+
+/* Responsive tablette */
+
+@media (max-width: 800px) {
+  .calendar-page {
+    padding: 22px 16px 40px;
+  }
+
+  .calendar-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .calendar-header h1 {
+    font-size: 29px;
+  }
+
+  .calendar-logout-button {
+    align-self: flex-start;
+  }
+
+  .calendar-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .calendar-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .calendar-filters select {
+    width: 100%;
+  }
+
+  .calendar-legend {
+    flex-wrap: wrap;
+  }
+
+  .calendar-card {
+    padding: 15px;
+    overflow-x: auto;
+  }
+
+  .calendar-card .fc {
+    min-width: 650px;
+  }
+}
+
+/* Responsive téléphone */
+
+@media (max-width: 600px) {
+  .calendar-page {
+    padding: 20px 12px 35px;
+  }
+
+  .calendar-card {
+    padding: 10px;
+  }
+
+  .calendar-card
+    .fc-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .calendar-card
+    .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+  }
+
+  .calendar-card
+    .fc-toolbar-title {
+    font-size: 20px;
+    text-align: center;
+  }
+}
 
 /* =========================
    PAGE MISSIONS
@@ -2110,4 +2753,231 @@
 .event-freelance {
     background-color: #f59e0b !important;
     border-color: #f59e0b !important;
+}
+
+/* =========================
+   PAGE CONNEXION
+========================= */
+
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+  box-sizing: border-box;
+
+  background:
+    linear-gradient(
+      135deg,
+      #edf9fc 0%,
+      #f5f7fa 45%,
+      #e8f0ff 100%
+    );
+}
+
+/* Carte */
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+
+  padding: 38px 40px;
+  box-sizing: border-box;
+
+  border: 1px solid #e2e7ee;
+  border-radius: 16px;
+
+  background-color: #ffffff;
+
+  box-shadow: 0 14px 40px
+    rgba(25, 39, 60, 0.12);
+}
+
+/* En-tête */
+
+.login-header {
+  margin-bottom: 30px;
+
+  text-align: center;
+}
+
+.login-logo {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 18px;
+
+  border-radius: 14px;
+
+  background-color: #72bdd1;
+  color: #ffffff;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  box-shadow: 0 6px 16px
+    rgba(84, 168, 191, 0.25);
+}
+
+.login-header h1 {
+  margin: 0;
+
+  color: #222222;
+  font-size: 31px;
+}
+
+.login-header p {
+  margin: 9px 0 0;
+
+  color: #667085;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Formulaire */
+
+.login-form {
+  width: 100%;
+}
+
+.login-field {
+  margin-bottom: 20px;
+}
+
+.login-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #475467;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-field input {
+  width: 100%;
+  min-height: 45px;
+
+  padding: 11px 13px;
+  box-sizing: border-box;
+
+  border: 1px solid #cbd2dc;
+  border-radius: 8px;
+
+  background-color: #ffffff;
+  color: #222222;
+
+  font-family: inherit;
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.login-field input::placeholder {
+  color: #98a2b3;
+}
+
+.login-field input:focus {
+  border-color: #72bdd1;
+
+  box-shadow: 0 0 0 3px
+    rgba(114, 189, 209, 0.2);
+}
+
+/* Erreur */
+
+.login-error {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background-color: #fef2f2;
+  color: #b42318;
+
+  font-size: 14px;
+}
+
+/* Bouton */
+
+.login-button {
+  width: 100%;
+  min-height: 46px;
+
+  padding: 10px 20px;
+
+  border: 1px solid #72bdd1;
+  border-radius: 8px;
+
+  background-color: #72bdd1;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.login-button:hover:not(:disabled) {
+  border-color: #54a8bf;
+  background-color: #54a8bf;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 6px 15px
+    rgba(84, 168, 191, 0.25);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Texte inférieur */
+
+.login-footer {
+  margin: 25px 0 0;
+  padding-top: 20px;
+
+  border-top: 1px solid #e2e7ee;
+
+  color: #98a2b3;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Téléphone */
+
+@media (max-width: 520px) {
+  .login-page {
+    padding: 18px;
+  }
+
+  .login-card {
+    padding: 30px 22px;
+  }
+
+  .login-header h1 {
+    font-size: 27px;
+  }
 }
