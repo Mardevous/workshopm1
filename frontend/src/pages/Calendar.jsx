@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list";
+import MissionForm from "../components/MissionForm";
 
 import { getMissions } from "../services/missionService";
 
@@ -11,28 +12,44 @@ function Calendar() {
     const [error, setError] = useState("");
     const [type, setType] = useState("");
     const [statut, setStatut] = useState("");
+    const [showForm, setShowForm] = useState(false);
+    const [formMode, setFormMode] = useState(null);
+    const [selectedMission, setSelectedMission] = useState(null);
 
-    useEffect(() => {
-        const fetchMissions = async () => {
-            try {
-                setLoading(true);
-                setError("");
+    const fetchMissions = async () => {
+        try {
+            setLoading(true);
+            setError("");
 
-                const data = await getMissions(type,statut);
+            const data = await getMissions(type,statut);
 
-                setMissions(data);
-            } catch (error) {
-                setError(
-                    error.response?.data?.message || "Erreur lors du changement de missions"
+            setMissions(data);
+        } catch (error) {
+            setError(
+                error.response?.data?.message || "Erreur lors du changement de missions"
                 );
             } finally {
                 setLoading(false);
             }
         };
+        useEffect(() => {
+            fetchMissions();
+        },
+         [type, statut]);
 
-        fetchMissions();
+    const handleEventClick = (info) => {
+        const mission = missions.find(
+            (mission) => 
+                String(mission._id) === String(info.event.id)
+        );
 
-    }, [type, statut]);
+        if (mission){
+            setSelectedMission(mission);
+            setFormMode("view");
+            setShowForm(true);
+        }
+    };
+
 
     const getEventClassName = (mission) => {
     if (mission.type === "intermittence") {
@@ -74,6 +91,12 @@ function Calendar() {
     if (error) {
         return <p>{error}</p>;
     }
+
+    const handleCloseForm = () => {
+    setShowForm(false);
+    setSelectedMission(null);
+    setFormMode(null);
+  };
 
     return (
         <div>
@@ -118,12 +141,23 @@ function Calendar() {
                 right: "dayGridMonth,listMonth",
             }}
 
-            eventClick={(info) => {
-                console.log(info.event);
-            }}
+            
+
+            eventClick={handleEventClick}
             />
+
+            {showForm && (
+            <MissionForm
+                mission={selectedMission}
+                mode={formMode}
+                onClose={handleCloseForm}
+                onSuccess={fetchMissions}
+            />
+            )}
         </div>
         </div>
+
+        
 
         
     );

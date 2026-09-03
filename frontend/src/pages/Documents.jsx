@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getMissions } from "../services/missionService";
-import {
-    getDocuments,
-    uploadDocument,
-    deleteDocument,
-    downloadDocument,
-} from "../services/documentService";
+import {getDocuments} from "../services/documentService";
 
 function Documents() {
     const [documents, setDocuments] = useState([]);

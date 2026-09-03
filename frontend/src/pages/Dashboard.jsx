@@ -70,7 +70,14 @@ function Dashboard() {
             Voir le calendrier
           </Link>
         </button>
+
+        <button>
+          <Link className="dashboard-link" to="/documents">
+            Voir les documents
+          </Link>
+        </button>
       </div>
+      
       
 
       {/* Répartition du temps */}

@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Missions from "./pages/Missions";
 import Calendar from "./pages/Calendar";
-// import Documents from "./pages/Documents";
+import Documents from "./pages/Documents";
 import Portfolio from "./pages/Portfolio";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -24,7 +24,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/missions" element={<Missions />} />
         <Route path="/calendar" element={<Calendar />} />
-        {/* <Route path="/documents" element={<Documents />} /> */}
+        <Route path="/documents" element={<Documents />} />
         <Route path="/portfolio" element={<Portfolio />} />
       </Route>
     </Routes>
