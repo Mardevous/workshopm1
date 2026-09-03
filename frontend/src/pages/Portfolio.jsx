@@ -1,7 +1,5 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 import {
   getPortfolioProjects,
@@ -11,27 +9,20 @@ import {
 import PortfolioForm from "../components/PortfolioForm";
 
 function Portfolio() {
-  const [projects, setProjects] =
-    useState([]);
-
+  const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
   const [tag, setTag] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [selectedProject, setSelectedProject ] = useState(null);
+  const [formMode, setFormMode] = useState("create");
 
-  const [loading, setLoading] =
-    useState(true);
 
-  const [error, setError] =
-    useState("");
-
-  const [showForm, setShowForm] =
-    useState(false);
-
-  const [
-    selectedProject,
-    setSelectedProject,
-  ] = useState(null);
-
-  const [formMode, setFormMode] =
-    useState("create");
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   // =========================
   // GET PROJECTS
@@ -42,8 +33,7 @@ function Portfolio() {
       setLoading(true);
       setError("");
 
-      const data =
-        await getPortfolioProjects(tag);
+      const data = await getPortfolioProjects(tag);
 
       setProjects(data);
     } catch (error) {
@@ -232,11 +222,19 @@ function Portfolio() {
   return (
     <div className="page-container">
       {/* HEADER */}
-
+      <button>
+        <Link className="dashboard-link" to="/dashboard">
+          Retour au dashboard
+        </Link>
+      </button>
       <div className="page-header">
-        <h1 className="page-title">
-          Portfolio
-        </h1>
+        <div className="header">
+          <h1>Portfolio</h1>
+
+          <button onClick={logout}>
+            Déconnexion
+          </button>
+        </div>
 
         <button
           className="btn btn-primary"
