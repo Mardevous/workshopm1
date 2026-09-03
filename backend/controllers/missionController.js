@@ -1,4 +1,5 @@
 const Mission = require("../models/Mission");
+const Document = require("../models/Document");
 
 // GET /api/missions
 // Liste + filtres
@@ -93,7 +94,7 @@ exports.updateMission = async (req, res) => {
 // DELETE /api/missions/:id
 exports.deleteMission = async (req, res) => {
   try {
-    const mission = await Mission.findByIdAndDelete(req.params.id);
+    const mission = await Mission.findById(req.params.id);
 
     if (!mission) {
       return res.status(404).json({
@@ -101,8 +102,17 @@ exports.deleteMission = async (req, res) => {
       });
     }
 
+    // 保留关联文件，但将它们变成全局文件
+    await Document.updateMany(
+      { mission_id: mission._id },
+      { $set: { mission_id: null } }
+    );
+
+    await Mission.findByIdAndDelete(mission._id);
+
     res.status(200).json({
-      message: "Mission supprimée avec succès",
+      message:
+        "Mission supprimée. Les documents associés ont été conservés comme documents globaux.",
     });
   } catch (error) {
     res.status(500).json({

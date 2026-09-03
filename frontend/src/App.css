@@ -69,6 +69,176 @@
   box-sizing: border-box;
 }
 
+
+/* =========================
+   document
+========================= */
+
+.document-mission-field {
+  position: relative;
+}
+
+.document-mission-field .mission-dropdown {
+  width: 520px;
+  max-width: 100%;
+}
+
+.mission-dropdown-input {
+  width: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+.mission-dropdown-options {
+  max-height: 230px;
+  overflow-y: auto;
+}
+
+.document-form-container {
+  width: 900px;
+  max-width: 90vw;
+  min-height: 480px;
+  max-height: 85vh;
+
+  padding: 35px 45px;
+  box-sizing: border-box;
+
+  overflow: visible;
+}
+
+.document-form-container form {
+  width: 100%;
+}
+
+.document-form-container fieldset {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.document-form-container .mission-dropdown {
+  width: 100%;
+}
+
+.document-form-container .mission-dropdown-panel {
+  width: 100%;
+}
+
+.document-form-container
+  .mission-dropdown-options {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.document-form-container
+  .mission-form-actions {
+  margin-top: 20px;
+}
+
+.document-filters {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.mission-filter {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.mission-dropdown {
+  position: relative;
+  width: 520px;
+}
+
+.mission-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+
+  background: white;
+  border: 1px solid #9ca3af;
+  border-radius: 5px;
+  box-shadow: 0 6px 16px
+    rgba(0, 0, 0, 0.2);
+}
+
+
+.mission-dropdown-options {
+  display: flex;
+  flex-direction: column;
+  max-height: 230px;
+  overflow-y: auto;
+}
+
+.mission-dropdown-option {
+  display: grid;
+  grid-template-columns: 95px 1fr auto;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  padding: 9px 10px;
+
+  border: none;
+  border-bottom: 1px solid #eee;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mission-dropdown-option:hover {
+  background: #f1f5f9;
+}
+
+.mission-dropdown-special {
+  display: block;
+  font-weight: 600;
+}
+
+.mission-type-badge {
+  display: inline-block;
+  padding: 4px 7px;
+  border-radius: 999px;
+
+  color: white;
+  font-size: 12px;
+  text-align: center;
+}
+
+.mission-option-name {
+  font-weight: 600;
+}
+
+.mission-option-date {
+  color: #64748b;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.document-mission {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.document-mission-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.document-mission-date {
+  color: #64748b;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+
 /* =========================
    PORTFOLIO
 ========================= */
@@ -142,6 +312,22 @@
 @media (max-width: 1000px) {
   .portfolio-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .document-form-container {
+    width: 94vw;
+    min-height: auto;
+    padding: 20px;
+  }
+
+  .mission-dropdown-option {
+    grid-template-columns: 90px 1fr;
+  }
+
+  .mission-option-date {
+    grid-column: 1 / -1;
   }
 }
 

@@ -155,3 +155,53 @@ exports.getDashboard = async (req, res) => {
     });
   }
 };
+
+// PATCH /api/dashboard/configuration
+exports.updateConfiguration = async (req, res) => {
+  try {
+    let configuration = await Configuration.findOne();
+
+    if (!configuration) {
+      configuration = await Configuration.create({
+        seuil_heures: 507,
+        heures_par_jour: 8,
+      });
+    }
+
+    if (req.body.seuil_heures !== undefined) {
+      const seuilHeures = Number(req.body.seuil_heures);
+
+      if (!Number.isFinite(seuilHeures) || seuilHeures < 0) {
+        return res.status(400).json({
+          message: "Le seuil d'heures est invalide",
+        });
+      }
+
+      configuration.seuil_heures = seuilHeures;
+    }
+
+    if (req.body.heures_par_jour !== undefined) {
+      const heuresParJour = Number(req.body.heures_par_jour);
+
+      if (!Number.isFinite(heuresParJour) || heuresParJour <= 0) {
+        return res.status(400).json({
+          message: "Le nombre d'heures par jour est invalide",
+        });
+      }
+
+      configuration.heures_par_jour = heuresParJour;
+    }
+
+    await configuration.save();
+
+    res.status(200).json({
+      message: "Configuration mise à jour",
+      configuration,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour de la configuration",
+      error: error.message,
+    });
+  }
+};

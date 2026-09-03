@@ -1,197 +1,609 @@
 import { useEffect, useState } from "react";
+import {
+  useNavigate,
+  Link,
+} from "react-router-dom";
 
 import { getMissions } from "../services/missionService";
-import {getDocuments} from "../services/documentService";
+
+import {
+  getDocuments,
+  viewDocument,
+  downloadDocument,
+  deleteDocument,
+} from "../services/documentService";
+
+import DocumentForm from "../components/DocumentForm";
 
 function Documents() {
-    const [documents, setDocuments] = useState([]);
-    const [missions, setMissions] = useState([]);
+  const navigate = useNavigate();
 
-    const [file, setFile] = useState(null);
-    const [categorie, setCategorie] = useState("");
-    const [missionId, setMissionId] = useState("");
+  const [documents, setDocuments] = useState([]);
+  const [missions, setMissions] = useState([]);
 
-    const [filterCategorie, setFilterCategorie] = useState("");
-    const [filterMission, setFilterMission] = useState("");
+  const [filterCategorie, setFilterCategorie] =
+    useState("");
 
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+  const [filterMission, setFilterMission] =
+    useState("");
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                setError("");
+  const [missionSearch, setMissionSearch] =
+    useState("");
 
-                const documentsData = await getDocuments(
-                    filterCategorie,
-                    filterMission
-                );
+  const [
+    showMissionDropdown,
+    setShowMissionDropdown,
+  ] = useState(false);
 
-                const missionData = await getMissions();
+  const [showForm, setShowForm] =
+    useState(false);
 
-                setDocuments(documentsData);
-                setMissions(missionData);
-                
-            } catch (error) {
-                setError(
-                error.response?.data?.message || "Erreur lors du chargement"
-                );
+  const [loading, setLoading] =
+    useState(true);
 
-            } finally {
-                setLoading(false);
-            }
-        };
+  const [error, setError] =
+    useState("");
 
-        fetchData();
-    }, [filterCategorie, filterMission]);
+  const [message, setMessage] =
+    useState("");
 
-    if (error) {
-        return <p>{error}</p>;
+  const fetchDocuments = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await getDocuments(
+        filterCategorie,
+        filterMission
+      );
+
+      setDocuments(data);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Erreur lors du chargement des documents"
+      );
+    } finally {
+      setLoading(false);
     }
-    
+  };
+
+  const fetchMissions = async () => {
+    try {
+      const data = await getMissions();
+      setMissions(data);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Erreur lors du chargement des missions"
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchMissions();
+  }, []);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [filterCategorie, filterMission]);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  const formatDate = (date) => {
+    if (!date) {
+      return "";
+    }
+
+    return new Date(date).toLocaleDateString(
+      "fr-FR"
+    );
+  };
+
+  const formatCategorie = (categorie) => {
+    const categories = {
+      contrat: "Contrat",
+      attestation_employeur:
+        "Attestation employeur",
+      devis: "Devis",
+      facture: "Facture",
+      autre: "Autre",
+    };
+
+    return categories[categorie] || categorie;
+  };
+
+  const selectedMissionLabel = (() => {
+    if (!filterMission) {
+      return "Toutes les missions";
+    }
+
+    if (filterMission === "global") {
+      return "Documents globaux";
+    }
+
+    const selectedMission = missions.find(
+      (mission) =>
+        mission._id === filterMission
+    );
+
     return (
+      selectedMission?.client_production ||
+      "Toutes les missions"
+    );
+  })();
+
+  const filteredMissions = missions.filter(
+    (mission) =>
+      mission.client_production
+        .toLowerCase()
+        .startsWith(
+          missionSearch.trim().toLowerCase()
+        )
+  );
+
+  const selectMission = (
+    missionId,
+    missionName
+  ) => {
+    setFilterMission(missionId);
+    setMissionSearch(missionName);
+    setShowMissionDropdown(false);
+  };
+
+  const handleUploadSuccess = async () => {
+    setMessage(
+      "Document ajouté avec succès."
+    );
+
+    await fetchDocuments();
+  };
+
+  const handleView = async (document) => {
+    try {
+      setError("");
+
+      const blob = await viewDocument(
+        document._id
+      );
+
+      const fileBlob = new Blob([blob], {
+        type:
+          document.mime_type ||
+          "application/octet-stream",
+      });
+
+      const url =
+        window.URL.createObjectURL(fileBlob);
+
+      const previewWindow = window.open(
+        url,
+        "_blank"
+      );
+
+      if (!previewWindow) {
+        setError(
+          "Le navigateur a bloqué l'ouverture du document."
+        );
+      }
+
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+      }, 60000);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Erreur lors de l'ouverture du document"
+      );
+    }
+  };
+
+  const handleDownload = async (document) => {
+    try {
+      setError("");
+
+      const blob = await downloadDocument(
+        document._id
+      );
+
+      const fileBlob = new Blob([blob], {
+        type:
+          document.mime_type ||
+          "application/octet-stream",
+      });
+
+      const url =
+        window.URL.createObjectURL(fileBlob);
+
+      const link =
+        window.document.createElement("a");
+
+      link.href = url;
+      link.download = document.nom;
+
+      window.document.body.appendChild(link);
+
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Erreur lors du téléchargement"
+      );
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmation = window.confirm(
+      "Voulez-vous vraiment supprimer ce document ?"
+    );
+
+    if (!confirmation) {
+      return;
+    }
+
+    try {
+      setError("");
+      setMessage("");
+
+      await deleteDocument(id);
+
+      setMessage(
+        "Document supprimé avec succès."
+      );
+
+      await fetchDocuments();
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Erreur lors de la suppression du document"
+      );
+    }
+  };
+
+  return (
     <div>
+      <Link
+        className="dashboard-link"
+        to="/dashboard"
+      >
+        Retour au dashboard
+      </Link>
+
+      <div className="header">
         <h1>Documents</h1>
 
-        <h2>Ajouter un document</h2>
+        <button onClick={logout}>
+          Déconnexion
+        </button>
+      </div>
 
-        <form>
-            <div>
-                <label>Fichier : </label>
+      <button
+        onClick={() => {
+          setMessage("");
+          setError("");
+          setShowForm(true);
+        }}
+      >
+        + Ajouter un document
+      </button>
 
-                <input
-                    type="file"
-                    accept=".pdf,image/*"
-                    onChange={(e) => setFile(e.target.files[0])}
-                />
-            </div>
+      {showForm && (
+        <DocumentForm
+          missions={missions}
+          onClose={() => setShowForm(false)}
+          onSuccess={handleUploadSuccess}
+        />
+      )}
 
-            <div>
-                <label>Catégorie : </label>
+      {message && (
+        <p className="success-message">
+          {message}
+        </p>
+      )}
 
-                <select
-                    value={categorie}
-                    onChange={(e) => setCategorie(e.target.value)}
-                >
-                    <option value="">Choisir une catégorie</option>
-                    <option value="contrat">Contrat</option>
-                    <option value="attestation_employeur">
-                        Attestation employeur
-                    </option>
-                    <option value="devis">Devis</option>
-                    <option value="facture">Facture</option>
-                    <option value="autre">Autre</option>
-                </select>
-            </div>
+      {error && (
+        <p className="mission-form-error">
+          {error}
+        </p>
+      )}
 
-            <div>
-                <label>Mission : </label>
+      <h2>Mes documents</h2>
 
-                <select
-                    value={missionId}
-                    onChange={(e) => setMissionId(e.target.value)}
-                >
-                    <option value="">Document global</option>
+      <div className="document-filters">
+        <div>
+          <label>Catégorie : </label>
 
-                    {missions.map((mission) => (
-                        <option
-                            key={mission._id}
-                            value={mission._id}
-                        >
-                            {mission.client_production}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <button type="submit">
-                Ajouter le document
-            </button>
-        </form>
-
-        <h2>Mes documents</h2>
-
-<div>
-    <label>Catégorie : </label>
-
-    <select
-        value={filterCategorie}
-        onChange={(e) => setFilterCategorie(e.target.value)}
-    >
-        <option value="">Toutes</option>
-        <option value="contrat">Contrat</option>
-        <option value="attestation_employeur">
-            Attestation employeur
-        </option>
-        <option value="devis">Devis</option>
-        <option value="facture">Facture</option>
-        <option value="autre">Autre</option>
-    </select>
-
-    <label>Mission : </label>
-
-    <select
-        value={filterMission}
-        onChange={(e) => setFilterMission(e.target.value)}
-    >
-        <option value="">Toutes les missions</option>
-
-        {missions.map((mission) => (
-            <option
-                key={mission._id}
-                value={mission._id}
-            >
-                {mission.client_production}
+          <select
+            value={filterCategorie}
+            onChange={(e) =>
+              setFilterCategorie(
+                e.target.value
+              )
+            }
+          >
+            <option value="">
+              Toutes
             </option>
-        ))}
-    </select>
-</div>
 
-{documents.length === 0 ? (
-    <p>Aucun document trouvé.</p>
-) : (
-    <table>
-        <thead>
-            <tr>
+            <option value="contrat">
+              Contrat
+            </option>
+
+            <option value="attestation_employeur">
+              Attestation employeur
+            </option>
+
+            <option value="devis">
+              Devis
+            </option>
+
+            <option value="facture">
+              Facture
+            </option>
+
+            <option value="autre">
+              Autre
+            </option>
+          </select>
+        </div>
+
+        <div className="mission-filter">
+          <label>Mission : </label>
+
+          <div className="mission-dropdown">
+            <input
+              type="text"
+              className="mission-dropdown-input"
+              value={missionSearch}
+              placeholder="Rechercher une mission"
+              autoComplete="off"
+              onFocus={() => {
+                // 点击时清空文字并显示全部Mission
+                setMissionSearch("");
+                setShowMissionDropdown(true);
+              }}
+              onClick={() => {
+                setShowMissionDropdown(true);
+              }}
+              onChange={(e) => {
+                setMissionSearch(e.target.value);
+                setShowMissionDropdown(true);
+              }}
+              onBlur={() => {
+                // 等待下拉选项的点击事件完成
+                setTimeout(() => {
+                  setShowMissionDropdown(false);
+
+                  if (!missionSearch) {
+                    setMissionSearch(
+                      selectedMissionLabel
+                    );
+                  }
+                }, 150);
+              }}
+            />
+
+            {showMissionDropdown && (
+              <div className="mission-dropdown-panel">
+                <div className="mission-dropdown-options">
+                  <button
+                    type="button"
+                    className="mission-dropdown-option mission-dropdown-special"
+                    onMouseDown={() =>
+                      selectMission(
+                        "",
+                        "Toutes les missions"
+                      )
+                    }
+                  >
+                    Toutes les missions
+                  </button>
+
+                  <button
+                    type="button"
+                    className="mission-dropdown-option mission-dropdown-special"
+                    onMouseDown={() =>
+                      selectMission(
+                        "global",
+                        "Documents globaux"
+                      )
+                    }
+                  >
+                    Documents globaux
+                  </button>
+
+                  {filteredMissions.map((mission) => (
+                    <button
+                      type="button"
+                      className="mission-dropdown-option"
+                      key={mission._id}
+                      onMouseDown={() =>
+                        selectMission(
+                          mission._id,
+                          mission.client_production
+                        )
+                      }
+                    >
+                      <span
+                        className={`mission-type-badge ${
+                          mission.type ===
+                          "intermittence"
+                            ? "event-intermittence"
+                            : "event-freelance"
+                        }`}
+                      >
+                        {mission.type ===
+                        "intermittence"
+                          ? "Intermittence"
+                          : "Freelance"}
+                      </span>
+
+                      <span className="mission-option-name">
+                        {mission.client_production}
+                      </span>
+
+                      <span className="mission-option-date">
+                        {formatDate(
+                          mission.date_debut
+                        )}
+
+                        {" → "}
+
+                        {formatDate(
+                          mission.date_fin
+                        )}
+                      </span>
+                    </button>
+                  ))}
+
+                  {filteredMissions.length === 0 && (
+                    <p className="mission-option-empty">
+                      Aucune mission trouvée
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {loading && (
+        <p>Chargement...</p>
+      )}
+
+      {!loading &&
+        documents.length === 0 && (
+          <p>
+            Aucun document trouvé.
+          </p>
+        )}
+
+      {!loading &&
+        documents.length > 0 && (
+          <table border="1">
+            <thead>
+              <tr>
                 <th>Nom</th>
                 <th>Catégorie</th>
                 <th>Mission</th>
+                <th>Taille</th>
                 <th>Actions</th>
-            </tr>
-        </thead>
+              </tr>
+            </thead>
 
-        <tbody>
-            {documents.map((document) => (
-                <tr key={document._id}>
-                    <td>{document.nom_original}</td>
+            <tbody>
+              {documents.map((document) => {
+                const mission =
+                  document.mission_id;
 
-                    <td>{document.categorie}</td>
+                return (
+                  <tr key={document._id}>
+                    <td>{document.nom}</td>
 
                     <td>
-                        {document.mission
-                            ? document.mission.client_production
-                            : "Global"}
+                      {formatCategorie(
+                        document.categorie
+                      )}
                     </td>
 
                     <td>
-                        <button>
-                            Télécharger
-                        </button>
+                      {mission ? (
+                        <div className="document-mission">
+                          <div className="document-mission-header">
+                            <span
+                              className={`mission-type-badge ${
+                                mission.type ===
+                                "intermittence"
+                                  ? "event-intermittence"
+                                  : "event-freelance"
+                              }`}
+                            >
+                              {mission.type ===
+                              "intermittence"
+                                ? "Intermittence"
+                                : "Freelance"}
+                            </span>
 
-                        <button>
-                            Supprimer
-                        </button>
+                            <span className="document-mission-date">
+                              {formatDate(
+                                mission.date_debut
+                              )}
+
+                              {" → "}
+
+                              {formatDate(
+                                mission.date_fin
+                              )}
+                            </span>
+                          </div>
+
+                          <strong>
+                            {
+                              mission.client_production
+                            }
+                          </strong>
+                        </div>
+                      ) : (
+                        <span>
+                          Global
+                        </span>
+                      )}
                     </td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-)};
+
+                    <td>
+                      {Math.round(
+                        document.taille /
+                          1024
+                      )}{" "}
+                      Ko
+                    </td>
+
+                    <td>
+                      <button
+                        onClick={() =>
+                          handleView(
+                            document
+                          )
+                        }
+                      >
+                        Voir
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          handleDownload(
+                            document
+                          )
+                        }
+                      >
+                        Télécharger
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          handleDelete(
+                            document._id
+                          )
+                        }
+                      >
+                        Supprimer
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
     </div>
-);
-
+  );
 }
-
 
 export default Documents;
