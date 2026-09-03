@@ -42,7 +42,7 @@ function Calendar() {
 };
     const addOneday = (date) => {
         const newDate = new Date(date);
-        newDate.serDate(newDate.getDate() +1);
+        newDate.setDate(newDate.getDate() +1);
 
         return newDate.toISOString().split("T")[0];
     };
@@ -80,25 +80,25 @@ function Calendar() {
             <label>Type: </label>
             <select
             value={type}
-            onChange={(e) => setType((e.target.value)}>
+            onChange={(e) => setType(e.target.value)}>
             <option value="">Tous</option>
-            <option value="Intermittence">Intermittence</option>
+            <option value="intermittence">Intermittence</option>
             <option value="freelance">Freelance</option>
             </select>
-        </div>
+        
 
         <label>Statut : </label>
 
         <select
-            value=(statut)
-            onchange={(e) => setStatut(e.target.value)}>
+            value={statut}
+            onChange={(e) => setStatut(e.target.value)}>
             <option value="">Tous</option>
-            <option value="En attente">En attente</option>
-            <option value="Confirmée">Confirmée</option>
-            <option value="En cours">En cours</option>
-            <option value="Terminée">Terminée</option>
+            <option value="proposee">Proposée</option>
+            <option value="confirmee">Confirmée</option>
+            <option value="terminee">Terminée</option>
             </select>
 
+        
         <div>
             <span> 🔵Intermittence</span>
             <span> 🟠Freelance</span>
@@ -112,10 +112,10 @@ function Calendar() {
             initialView="dayGridMonth"
             locale="fr"
             events={events}
-            haederToolbar={{
-                left: "prev, next today",
+            headerToolbar={{
+                left: "prev,next today",
                 center: "title",
-                right: "dayGridMonth,listMonth"
+                right: "dayGridMonth,listMonth",
             }}
 
             eventClick={(info) => {
@@ -123,8 +123,10 @@ function Calendar() {
             }}
             />
         </div>
+        </div>
 
         
     );
+}
 
 export default Calendar;
