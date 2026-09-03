@@ -9,13 +9,16 @@ function Calendar() {
     const [missions, setMissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [type, setType] = useState("");
+    const [statut, setStatut] = useState("");
 
     useEffect(() => {
         const fetchMissions = async () => {
             try {
                 setLoading(true);
+                setError("");
 
-                const data = await getMissions();
+                const data = await getMissions(type,statut);
 
                 setMissions(data);
             } catch (error) {
@@ -29,7 +32,7 @@ function Calendar() {
 
         fetchMissions();
 
-    }, []);
+    }, [type, statut]);
 
     const getEventClassName = (mission) => {
     if (mission.type === "intermittence") {
@@ -37,14 +40,30 @@ function Calendar() {
         }
         return "event-freelance";
 };
+    const addOneday = (date) => {
+        const newDate = new Date(date);
+        newDate.setDate(newDate.getDate() +1);
 
-const events = missions.map((mission) => ({
+        return newDate.toISOString().split("T")[0];
+    };
+
+    const events = missions.map((mission) => ({
     id: mission._id,
     title : mission.client_production,
     start: mission.date_debut,
-    end: mission.date_fin,
-
+    end: addOneday(mission.date_fin),
+    allDay: true,
     className: getEventClassName(mission),
+
+    extendedProps: {
+        type: mission.type,
+        statut: mission.statut,
+        heures: mission.heures,
+        cachets: mission.cachets,
+        montant_ht: mission.montant_ht,
+        nombre_jours: mission.nombre_jours,
+        note: mission.note,
+    }
 
 }));
 
@@ -58,6 +77,34 @@ const events = missions.map((mission) => ({
 
     return (
         <div>
+            <label>Type: </label>
+            <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}>
+            <option value="">Tous</option>
+            <option value="intermittence">Intermittence</option>
+            <option value="freelance">Freelance</option>
+            </select>
+        
+
+        <label>Statut : </label>
+
+        <select
+            value={statut}
+            onChange={(e) => setStatut(e.target.value)}>
+            <option value="">Tous</option>
+            <option value="proposee">Proposée</option>
+            <option value="confirmee">Confirmée</option>
+            <option value="terminee">Terminée</option>
+            </select>
+
+        
+        <div>
+            <span> 🔵Intermittence</span>
+            <span> 🟠Freelance</span>
+        </div>
+
+        <div>
             <h1>Calendrier</h1>
 
             <FullCalendar
@@ -65,13 +112,20 @@ const events = missions.map((mission) => ({
             initialView="dayGridMonth"
             locale="fr"
             events={events}
-            haederToolbar={{
-                left: "prev, next today",
+            headerToolbar={{
+                left: "prev,next today",
                 center: "title",
-                right: "dayGridMonth,listMonth"
+                right: "dayGridMonth,listMonth",
+            }}
+
+            eventClick={(info) => {
+                console.log(info.event);
             }}
             />
         </div>
+        </div>
+
+        
     );
 }
 
