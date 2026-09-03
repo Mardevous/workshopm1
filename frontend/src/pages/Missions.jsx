@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   getMissions,
   deleteMission,
@@ -6,6 +7,7 @@ import {
 import MissionForm from "../components/MissionForm";
 
 function Missions() {
+  const navigate = useNavigate();
   const [missions, setMissions] = useState([]);
 
   const [type, setType] = useState("");
@@ -39,6 +41,11 @@ function Missions() {
   useEffect(() => {
     fetchMissions();
   }, [type, statut]);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   const handleCreate = () => {
     setSelectedMission(null);
@@ -103,7 +110,19 @@ function Missions() {
 
   return (
     <div>
+      <button>
+        <Link className="dashboard-link" to="/dashboard">
+          Retour au dashboard
+        </Link>
+      </button>
+      
+      <div className="header">
         <h1>Missions</h1>
+
+        <button onClick={logout}>
+          Déconnexion
+        </button>
+      </div>
 
         <button onClick={handleCreate}>
             + Nouvelle mission
@@ -149,6 +168,11 @@ function Missions() {
             </select>
         </div>
 
+        <div>
+          <span> 🔵Intermittence</span>
+          <span> 🟠Freelance</span>
+        </div>
+
         {loading && <p>Chargement...</p>}
 
         {error && <p>{error}</p>}
@@ -182,10 +206,18 @@ function Missions() {
                     </td>
 
                     <td>
-                    {mission.type === "intermittence"
+                    <span
+                      className={`c-color ${
+                        mission.type === "intermittence"
+                          ? "event-intermittence"
+                          : "event-freelance"
+                      }`}
+                    >
+                      {mission.type === "intermittence"
                         ? "Intermittence"
                         : "Freelance"}
-                    </td>
+                    </span>
+                  </td>
 
                     <td>
                     {mission.statut === "proposee" &&

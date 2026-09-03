@@ -43,7 +43,14 @@ function Dashboard() {
 
   return (
     <div>
-      <h1>Tableau de bord</h1>
+      <div className="header">
+        <h1>Tableau de bord</h1>
+
+        <button onClick={logout}>
+          Déconnexion
+        </button>
+      </div>
+      
 
       <div className="dashboard-buttons">
         <button>
@@ -119,10 +126,6 @@ function Dashboard() {
           </p>
         ))}
       </section>
-
-      <button onClick={logout}>
-        Déconnexion
-      </button>
     </div>
   );
 }
