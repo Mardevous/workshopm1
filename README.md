@@ -8,12 +8,10 @@ Projet réalisé dans le cadre du **Workshop client** – MBA Développeur Full 
 
 ### Prérequis
 
-Avant de lancer le projet, vous devez disposer de :
-
 - Node.js
 - npm
 - Git
-- une base MongoDB
+- MongoDB
 
 ### 1. Cloner le dépôt
 
@@ -21,14 +19,17 @@ Avant de lancer le projet, vous devez disposer de :
 git clone https://github.com/Mardevous/workshopm1.git
 cd workshopm1
 ```
-### 2. Installer le backend
+
+### 2. Installer les dépendances
 
 ```bash
-cd backend
 npm install
+npm run install:all
 ```
 
-### 3. Créer un fichier `.env` dans `/backend`
+### 3. Configurer les variables d'environnement
+
+Créer `/backend/.env` :
 
 ```env
 PORT=5000
@@ -36,32 +37,21 @@ MONGODB_URI=votre_uri_mongodb
 JWT_SECRET=votre_cle_secrete
 ```
 
-Puis lancer l'API :
-
-```bash
-npm run dev
-```
-
-### 4. Installer le frontend
-
-Dans un second terminal, depuis la racine du projet :
-
-```bash
-cd frontend
-npm install
-```
-
-### 5. Créer un fichier `.env` dans `/frontend`
+Créer `/frontend/.env` :
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-Puis lancer le frontend :
+### 4. Lancer l'application
+
+Depuis la racine :
 
 ```bash
 npm run dev
 ```
+
+Cette commande démarre simultanément le backend Express et le frontend React/Vite.
 
 ## L'objectif de l'application
 
@@ -113,6 +103,7 @@ simultanément depuis la racine du projet :
 
 ```bash
 npm run dev
+```
 
 ## Variables d'environnement
 
