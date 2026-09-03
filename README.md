@@ -4,16 +4,75 @@
 
 Projet réalisé dans le cadre du **Workshop client** – MBA Développeur Full Stack, M1 DFS, MyDigitalSchool.
 
+## Installation et lancement en local
+
+### Prérequis
+
+Avant de lancer le projet, vous devez disposer de :
+
+- Node.js
+- npm
+- Git
+- une base MongoDB
+
+### 1. Cloner le dépôt
+
+```bash
+git clone https://github.com/Mardevous/workshopm1.git
+cd workshopm1
+```
+### 2. Installer le backend
+
+```bash
+cd backend
+npm install
+```
+
+### 3. Créer un fichier `.env` dans `/backend`
+
+```env
+PORT=5000
+MONGODB_URI=votre_uri_mongodb
+JWT_SECRET=votre_cle_secrete
+```
+
+Puis lancer l'API :
+
+```bash
+npm run dev
+```
+
+### 4. Installer le frontend
+
+Dans un second terminal, depuis la racine du projet :
+
+```bash
+cd frontend
+npm install
+```
+
+### 5. Créer un fichier `.env` dans `/frontend`
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Puis lancer le frontend :
+
+```bash
+npm run dev
+```
+
 ## L'objectif de l'application
 
-L'application a pour objectif de concilier, à la fois **intermittent du spectacle** et **freelance**. L'idée est de distinguer dès le premier coup d'œil les heures d'intermittence des projets freelance à travers plusieurs éléments pris en compte: 
+L'application a pour objectif d'aider un monteur vidéo exerçant à la fois sous le régime de l'intermittence du spectacle et en freelance à centraliser et suivre son activité professionnelle. L'idée est de distinguer dès le premier coup d'œil les heures d'intermittence des projets freelance à travers plusieurs éléments pris en compte: 
 - suivre ses missions (intermittence et freelance) sur un calendrier et une liste filtrable ;
 - visualiser en un coup d'œil ses heures d'intermittence cumulées sur 12 mois glissants (avec seuil configurable), son CA freelance et la répartition de son temps entre les deux régimes ;
 - centraliser et retrouver ses documents (contrats, attestations, devis, factures) par mission ou par catégorie ;
 - valoriser son travail via un portfolio de projets (lien vidéo intégré) ;
 - se connecter de façon sécurisée à son espace personnel (mono-utilisateur).
 
-**Module différenciant** : génération PDF d'un devis ou d'un récapitulatif de mission à partir des données saisies.
+**Module différenciant** : génération PDF d'un devis ou d'un récapitulatif de mission à partir des données saisies. La fonctionnalité est dans la page mission. Sur la ligne d'une mission, on a un bouton permettant de générer un PDF récapitulatif de la mission.
 
 ## Stack technique
 
@@ -83,6 +142,13 @@ Toutes les routes (hors `/api/auth/login`) nécessitent un header `Authorization
 Le seuil d'heures (507 h par défaut) et le nombre d'heures par jour type (8 h par défaut) sont stockés dans la collection `Configuration`, et non codés en dur, conformément aux règles métier du brief.
 
 ## Documentation
+
+documents --> 
+- 1 Note de cadrage
+- 2 Spécifications fonctionnelles
+- 3 Spécification techniques
+- 4 Guide reprise.md
+- 5 roadmap.md
 
 ## Équipe
 
