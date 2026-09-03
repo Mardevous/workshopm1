@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  getMissions,
-  deleteMission,
-} from "../services/missionService";
+import { getMissions, deleteMission, generateMissionPdf } from "../services/missionService";
 import MissionForm from "../components/MissionForm";
 
 function Missions() {
@@ -35,6 +32,43 @@ function Missions() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGeneratePdf = async (mission) => {
+    try {
+      setError("");
+
+      const pdfBlob = await generateMissionPdf(
+        mission._id
+      );
+
+      const pdfUrl = window.URL.createObjectURL(
+        pdfBlob
+      );
+
+      const link = document.createElement("a");
+
+      link.href = pdfUrl;
+
+      const safeClientName =
+        mission.client_production
+          ?.replace(/[^a-zA-Z0-9À-ÿ_-]/g, "_") ||
+        "mission";
+
+      link.download =
+        `recapitulatif-${safeClientName}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(pdfUrl);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Erreur lors de la génération du PDF"
+      );
     }
   };
 
@@ -242,11 +276,11 @@ function Missions() {
                       Modifier
                     </button>
 
-                    <button
-                        onClick={() =>
-                        handleDelete(mission._id)
-                        }
-                    >
+                    <button onClick={() => handleGeneratePdf(mission)}>
+                      Générer PDF
+                    </button>
+
+                    <button onClick={() => handleDelete(mission._id)}>
                         Supprimer
                     </button>
                     </td>

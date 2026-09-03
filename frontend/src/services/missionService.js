@@ -37,3 +37,14 @@ export const deleteMission = async (id) => {
   const response = await api.delete(`/missions/${id}`);
   return response.data;
 };
+
+export const generateMissionPdf = async (id) => {
+  const response = await api.get(
+    `/missions/${id}/pdf`,
+    {
+      responseType: "blob",
+    }
+  );
+
+  return response.data;
+};
