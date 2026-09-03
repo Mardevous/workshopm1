@@ -1,5 +1,9 @@
-
-
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+}
 
 
 /* =========================
@@ -145,6 +149,10 @@
   .portfolio-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.c-color{
+  color: #FFF;
 }
 
 .event-intermittence {
