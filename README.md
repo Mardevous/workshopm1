@@ -4,16 +4,65 @@
 
 Projet réalisé dans le cadre du **Workshop client** – MBA Développeur Full Stack, M1 DFS, MyDigitalSchool.
 
-## L'ibjectif de l'application
+## Installation et lancement en local
 
-L'application a pour objectif de concilier, à la fois **intermittent du spectacle** et **freelance**. L'idée est de distinguer dès le premier coup d'œil les heures d'intermittence des projets freelance à travers plusieurs éléments pris en compte: 
+### Prérequis
+
+- Node.js
+- npm
+- Git
+- MongoDB
+
+### 1. Cloner le dépôt
+
+```bash
+git clone https://github.com/Mardevous/workshopm1.git
+cd workshopm1
+```
+
+### 2. Installer les dépendances
+
+```bash
+npm install
+npm run install:all
+```
+
+### 3. Configurer les variables d'environnement
+
+Créer `/backend/.env` :
+
+```env
+PORT=5000
+MONGODB_URI=votre_uri_mongodb
+JWT_SECRET=votre_cle_secrete
+```
+
+Créer `/frontend/.env` :
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+### 4. Lancer l'application
+
+Depuis la racine :
+
+```bash
+npm run dev
+```
+
+Cette commande démarre simultanément le backend Express et le frontend React/Vite.
+
+## L'objectif de l'application
+
+L'application a pour objectif d'aider un monteur vidéo exerçant à la fois sous le régime de l'intermittence du spectacle et en freelance à centraliser et suivre son activité professionnelle. L'idée est de distinguer dès le premier coup d'œil les heures d'intermittence des projets freelance à travers plusieurs éléments pris en compte: 
 - suivre ses missions (intermittence et freelance) sur un calendrier et une liste filtrable ;
 - visualiser en un coup d'œil ses heures d'intermittence cumulées sur 12 mois glissants (avec seuil configurable), son CA freelance et la répartition de son temps entre les deux régimes ;
 - centraliser et retrouver ses documents (contrats, attestations, devis, factures) par mission ou par catégorie ;
 - valoriser son travail via un portfolio de projets (lien vidéo intégré) ;
 - se connecter de façon sécurisée à son espace personnel (mono-utilisateur).
 
-**Module différenciant** : génération PDF d'un devis ou d'un récapitulatif de mission à partir des données saisies.
+**Module différenciant** : génération PDF d'un devis ou d'un récapitulatif de mission à partir des données saisies. La fonctionnalité est dans la page mission. Sur la ligne d'une mission, on a un bouton permettant de générer un PDF récapitulatif de la mission.
 
 ## Stack technique
 
@@ -46,7 +95,15 @@ workshopm1/
 └── docs/                 # Dossier technique (note de cadrage, specs, guide de reprise, roadmap)
 ```
 
-> Le projet ne dispose pas encore d'une configuration Docker unique pour lancer front et back en une seule commande : deux terminaux sont nécessaires, comme décrit ci-dessus.
+## Lancement de l'application
+
+Après avoir installé les dépendances et configuré les variables
+d'environnement, le frontend et le backend peuvent être lancés
+simultanément depuis la racine du projet :
+
+```bash
+npm run dev
+```
 
 ## Variables d'environnement
 
@@ -60,7 +117,7 @@ workshopm1/
 ## Application déployée du nom de Fassil
 
 - **Frontend** : [workshopm1.vercel.app](https://workshopm1.vercel.app/) (Vercel)
-- **Backend** : hébergé sur Render
+- **Backend** :  [workshopm1-1sbk](https://workshopm1-1sbk.onrender.com/) (Render)
 - **Base de données** : MongoDB Atlas
 
 **Compte de démonstration** :
@@ -83,6 +140,13 @@ Toutes les routes (hors `/api/auth/login`) nécessitent un header `Authorization
 Le seuil d'heures (507 h par défaut) et le nombre d'heures par jour type (8 h par défaut) sont stockés dans la collection `Configuration`, et non codés en dur, conformément aux règles métier du brief.
 
 ## Documentation
+
+documents --> 
+- 1 Note de cadrage
+- 2 Spécifications fonctionnelles
+- 3 Spécification techniques
+- 4 Guide reprise.md
+- 5 roadmap.md
 
 ## Équipe
 
