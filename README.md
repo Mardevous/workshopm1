@@ -60,7 +60,7 @@ workshopm1/
 ## Application déployée du nom de Fassil
 
 - **Frontend** : [workshopm1.vercel.app](https://workshopm1.vercel.app/) (Vercel)
-- **Backend** : hébergé sur Render
+- **Backend** :  [workshopm1-1sbk](https://workshopm1-1sbk.onrender.com/) (Render)
 - **Base de données** : MongoDB Atlas
 
 **Compte de démonstration** :
