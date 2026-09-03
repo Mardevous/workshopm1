@@ -4,7 +4,7 @@
 
 Projet réalisé dans le cadre du **Workshop client** – MBA Développeur Full Stack, M1 DFS, MyDigitalSchool.
 
-## L'ibjectif de l'application
+## L'objectif de l'application
 
 L'application a pour objectif de concilier, à la fois **intermittent du spectacle** et **freelance**. L'idée est de distinguer dès le premier coup d'œil les heures d'intermittence des projets freelance à travers plusieurs éléments pris en compte: 
 - suivre ses missions (intermittence et freelance) sur un calendrier et une liste filtrable ;
