@@ -105,7 +105,14 @@ workshopm1/
 └── docs/                 # Dossier technique (note de cadrage, specs, guide de reprise, roadmap)
 ```
 
-> Le projet ne dispose pas encore d'une configuration Docker unique pour lancer front et back en une seule commande : deux terminaux sont nécessaires, comme décrit ci-dessus.
+## Lancement de l'application
+
+Après avoir installé les dépendances et configuré les variables
+d'environnement, le frontend et le backend peuvent être lancés
+simultanément depuis la racine du projet :
+
+```bash
+npm run dev
 
 ## Variables d'environnement
 
