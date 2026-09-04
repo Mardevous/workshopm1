@@ -145,11 +145,11 @@ La documentation complète du projet est disponible dans le dossier [`/docs`](./
 
 Elle comprend :
 
-1. [Note de cadrage](./docs/01-note-cadrage.md)
-2. [Spécifications fonctionnelles](./docs/02-specifications-fonctionnelles.md)
-3. [Spécifications techniques](./docs/03-specifications-techniques.md)
-4. [Guide de reprise](./docs/04-guide-reprise.md)
-5. [Roadmap](./docs/05-roadmap.md)
+1. [Note de cadrage](./documents/01-note-cadrage.md)
+2. [Spécifications fonctionnelles](./documents/02-specifications-fonctionnelles.md)
+3. [Spécifications techniques](./documents/03-specifications-techniques.md)
+4. [Guide de reprise](./documents/04-guide-reprise.md)
+5. [Roadmap](./documents/05-roadmap.md)
 
 Une version exportée au format PDF est également disponible dans le dossier `/docs`.
 
