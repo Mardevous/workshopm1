@@ -141,7 +141,7 @@ Le seuil d'heures (507 h par défaut) et le nombre d'heures par jour type (8 h p
 
 ## Documentation
 
-La documentation complète du projet est disponible dans le dossier [`/docs`](./docs).
+La documentation complète du projet est disponible dans le dossier [`/documents`](./documents).
 
 Elle comprend :
 
@@ -151,7 +151,7 @@ Elle comprend :
 4. [Guide de reprise](./documents/04-guide-reprise.md)
 5. [Roadmap](./documents/05-roadmap.md)
 
-Une version exportée au format PDF est également disponible dans le dossier `/docs`.
+Une version exportée au format PDF du dossier technique est également disponible dans le dossier 
 
 ## Équipe
 
