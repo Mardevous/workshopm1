@@ -141,12 +141,17 @@ Le seuil d'heures (507 h par défaut) et le nombre d'heures par jour type (8 h p
 
 ## Documentation
 
-documents --> 
-- 1 Note de cadrage
-- 2 Spécifications fonctionnelles
-- 3 Spécification techniques
-- 4 Guide reprise.md
-- 5 roadmap.md
+La documentation complète du projet est disponible dans le dossier [`/docs`](./docs).
+
+Elle comprend :
+
+1. [Note de cadrage](./docs/01-note-cadrage.md)
+2. [Spécifications fonctionnelles](./docs/02-specifications-fonctionnelles.md)
+3. [Spécifications techniques](./docs/03-specifications-techniques.md)
+4. [Guide de reprise](./docs/04-guide-reprise.md)
+5. [Roadmap](./docs/05-roadmap.md)
+
+Une version exportée au format PDF est également disponible dans le dossier `/docs`.
 
 ## Équipe
 
